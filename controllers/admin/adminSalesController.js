@@ -47,7 +47,6 @@ const loadSalesReport = async (req, res) => {
 async function generateChartData() {
     const today = new Date();
 
-   
     const dailyData = await Order.aggregate([
         {
             $match: {
@@ -68,7 +67,6 @@ async function generateChartData() {
         { $sort: { "_id": 1 } }
     ]);
 
-   
     const weeklyData = await Order.aggregate([
         {
             $match: {
@@ -92,7 +90,6 @@ async function generateChartData() {
         { $sort: { "_id.year": 1, "_id.week": 1 } }
     ]);
 
-  
     const monthlyData = await Order.aggregate([
         {
             $match: {
@@ -116,7 +113,6 @@ async function generateChartData() {
         { $sort: { "_id.year": 1, "_id.month": 1 } }
     ]);
 
-    
     const yearlyData = await Order.aggregate([
         {
             $match: {
@@ -181,7 +177,6 @@ const filterSalesReport = async (req, res) => {
                     start.setDate(today.getDate() - today.getDay());
                     start.setHours(0, 0, 0, 0);
 
-                    
                     end = new Date(today);
                     end.setDate(today.getDate() + (6 - today.getDay()));
                     end.setHours(23, 59, 59, 999);
@@ -261,8 +256,6 @@ async function getStats(startDate, endDate) {
                 }
             }
         ]);
-
-
 
         if (stats.length === 0) {
             return {
@@ -448,30 +441,25 @@ const downloadExcel = async (req, res) => {
             getTopCategories(start, end)
         ]);
 
-       
         const workbook = new ExcelJS.Workbook();
         workbook.creator = 'Sales Report System';
         workbook.created = new Date();
 
- 
         const summarySheet = workbook.addWorksheet('Summary');
         summarySheet.columns = [
             { header: 'Metric', key: 'metric', width: 20 },
             { header: 'Value', key: 'value', width: 15 }
         ];
 
-       
         summarySheet.addRows([
             { metric: 'Total Sales Count', value: stats.salesCount },
             { metric: 'Total Order Amount', value: stats.orderAmount },
             { metric: 'Total Discount', value: stats.discount }
         ]);
 
-      
         summarySheet.getRow(1).font = { bold: true };
         summarySheet.getColumn('value').numFmt = '₹#,##0.00';
 
-       
         const ordersSheet = workbook.addWorksheet('Orders');
         ordersSheet.columns = [
             { header: 'Order ID', key: 'orderId', width: 15 },
@@ -483,7 +471,6 @@ const downloadExcel = async (req, res) => {
             { header: 'Status', key: 'status', width: 12 }
         ];
 
-   
         orders.forEach(order => {
             ordersSheet.addRow({
                 orderId: order.orderId,
@@ -496,13 +483,11 @@ const downloadExcel = async (req, res) => {
             });
         });
 
-  
         ordersSheet.getRow(1).font = { bold: true };
         ['amount', 'discount', 'finalAmount'].forEach(col => {
             ordersSheet.getColumn(col).numFmt = '₹#,##0.00';
         });
 
-       
         const productsSheet = workbook.addWorksheet('Top Products');
         productsSheet.columns = [
             { header: 'Product Name', key: 'name', width: 30 },
@@ -510,7 +495,6 @@ const downloadExcel = async (req, res) => {
             { header: 'Revenue', key: 'revenue', width: 15 }
         ];
 
-      
         topProducts.forEach(product => {
             productsSheet.addRow({
                 name: product.productName,
@@ -519,11 +503,9 @@ const downloadExcel = async (req, res) => {
             });
         });
 
-       
         productsSheet.getRow(1).font = { bold: true };
         productsSheet.getColumn('revenue').numFmt = '₹#,##0.00';
 
-       
         const categoriesSheet = workbook.addWorksheet('Top Categories');
         categoriesSheet.columns = [
             { header: 'Category Name', key: 'name', width: 30 },
@@ -531,7 +513,6 @@ const downloadExcel = async (req, res) => {
             { header: 'Revenue', key: 'revenue', width: 15 }
         ];
 
-        
         topCategories.forEach(category => {
             categoriesSheet.addRow({
                 name: category.categoryName,
@@ -540,14 +521,11 @@ const downloadExcel = async (req, res) => {
             });
         });
 
-      
         categoriesSheet.getRow(1).font = { bold: true };
         categoriesSheet.getColumn('revenue').numFmt = '₹#,##0.00';
 
-        
         const buffer = await workbook.xlsx.writeBuffer();
 
-    
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', `attachment; filename=sales-report-${new Date().toISOString().split('T')[0]}.xlsx`);
         res.send(buffer);

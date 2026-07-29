@@ -55,73 +55,59 @@ const walletSchema = new Schema({
     }
 });
 
-
 walletSchema.methods.addRefund = async function(amount, orderId) {
-    try {
-        const transaction = {
-            userId: this.userId,
-            type: 'credit',
-            amount: amount,
-            description: `Refund for order #${orderId}`,
-            orderId: orderId,
-            transactionType: 'refund'
-        };
+    const transaction = {
+        userId: this.userId,
+        type: 'credit',
+        amount: amount,
+        description: `Refund for order #${orderId}`,
+        orderId: orderId,
+        transactionType: 'refund'
+    };
 
-        this.balance += amount;
-        this.transactions.push(transaction);
-        this.lastUpdated = Date.now();
-        
-        return await this.save();
-    } catch (error) {
-        throw error;
-    }
+    this.balance += amount;
+    this.transactions.push(transaction);
+    this.lastUpdated = Date.now();
+    
+    return await this.save();
 };
 
-
 walletSchema.methods.useForPurchase = async function(amount, orderId) {
-    try {
-        if (this.balance < amount) {
-            throw new Error('Insufficient wallet balance');
-        }
-
-        const transaction = {
-            userId: this.userId,
-            type: 'debit',
-            amount: amount,
-            description: `Purchase payment for order #${orderId}`,
-            orderId: orderId,
-            transactionType: 'purchase'
-        };
-
-        this.balance -= amount;
-        this.transactions.push(transaction);
-        this.lastUpdated = Date.now();
-        
-        return await this.save();
-    } catch (error) {
-        throw error;
+    if (this.balance < amount) {
+        throw new Error('Insufficient wallet balance');
     }
+
+    const transaction = {
+        userId: this.userId,
+        type: 'debit',
+        amount: amount,
+        description: `Purchase payment for order #${orderId}`,
+        orderId: orderId,
+        transactionType: 'purchase'
+    };
+
+    this.balance -= amount;
+    this.transactions.push(transaction);
+    this.lastUpdated = Date.now();
+    
+    return await this.save();
 };
 
 walletSchema.methods.addRefund = async function(amount, orderId = null, description = 'Refund', transactionType = 'refund') {
-    try {
-        const transaction = {
-            userId: this.userId,
-            type: 'credit',
-            amount: amount,
-            description: description,
-            orderId: orderId,
-            transactionType: transactionType
-        };
+    const transaction = {
+        userId: this.userId,
+        type: 'credit',
+        amount: amount,
+        description: description,
+        orderId: orderId,
+        transactionType: transactionType
+    };
 
-        this.balance += amount;
-        this.transactions.push(transaction);
-        this.lastUpdated = Date.now();
+    this.balance += amount;
+    this.transactions.push(transaction);
+    this.lastUpdated = Date.now();
 
-        return await this.save();
-    } catch (error) {
-        throw error;
-    }
+    return await this.save();
 };
 const Wallet = mongoose.model('Wallet', walletSchema);
 

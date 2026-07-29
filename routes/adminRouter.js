@@ -8,18 +8,15 @@ const adminOrderController = require('../controllers/admin/adminOrderController'
 const adminCouponController = require('../controllers/admin/adminCouponController');
 const adminSalesController = require('../controllers/admin/adminSalesController');
 const { userAuth, adminAuth } = require('../middlewares/auth');
-const multer = require('multer');
-const storage = require('../helpers/multer');
-const uploads = multer({ storage: storage });
 const { uploadProduct } = require('../helpers/productMulter');
 
 //login management
 
+router.get('/', adminAuth, (req, res) => res.redirect('/admin/sales-report'));
 router.get('/pageError', adminController.pageError)
 router.get('/login', adminController.loadLogin);
 router.post('/login', adminController.login)
 router.get('/logout', adminController.logout);
-
 
 //customer management
 router.get('/users', adminAuth, customerController.customerInfo);
@@ -36,7 +33,6 @@ router.get('/unlistCategory', adminAuth, categoryController.getUnlistCategory);
 router.get('/editCategory', adminAuth, categoryController.getEditCategory);
 router.post('/editCategory/:id', adminAuth, categoryController.editCategory);
 
-
 //product management
 router.get('/addProducts', adminAuth, productController.getProductAddPage);
 router.post('/addProducts', adminAuth, uploadProduct, productController.addProducts);
@@ -46,7 +42,7 @@ router.post('/removeProductOffer', adminAuth, productController.removeProductOff
 router.get('/blockProduct', adminAuth, productController.blockProduct);
 router.get('/unblockProduct', adminAuth, productController.unblockProduct);
 router.get('/editProduct', adminAuth, productController.getEditProduct);
-router.post('/editProduct/:id', adminAuth, uploads.array('images', 4), productController.editProduct);
+router.post('/editProduct/:id', adminAuth, uploadProduct, productController.editProduct);
 router.post('/deleteImage', adminAuth, productController.deleteSingleImage);
 
 //order management
@@ -60,23 +56,16 @@ router.get('/returns', adminAuth, adminOrderController.getReturnRequests);
 router.post('/returns/:returnId/approve',adminAuth,adminOrderController.approveReturnRequest);
 router.post('/returns/:returnId/reject',adminAuth, adminOrderController.rejectReturnRequest);
 
-
 //coupon management
 router.get('/coupons', adminAuth, adminCouponController.getCoupon);
 router.get('/addCoupons', adminAuth, adminCouponController.addCoupon);
 router.post('/createCoupon', adminAuth, adminCouponController.createCoupon);
 router.post('/deleteCoupon/:id', adminAuth, adminCouponController.deleteCoupon);
+router.get('/editCoupon', adminAuth, adminCouponController.editCouponPage);
+router.post('/updateCoupon/:id', adminAuth, adminCouponController.updateCoupon);
 
 router.get('/sales-report', adminAuth, adminSalesController.loadSalesReport);
 router.post('/sales-report/filter', adminAuth, adminSalesController.filterSalesReport);
 router.post('/sales-report/excel', adminSalesController.downloadExcel);
-
-
-
-
-
-
-
-
 
 module.exports = router

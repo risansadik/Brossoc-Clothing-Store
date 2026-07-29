@@ -1,399 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brossoc - Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+<%- include('../../views/partials/user/profilePartials/header.ejs') %>
+<% if(false) { %><!-- VSCode Linter Trick --><html><body><div class="profile-layout"><main class="profile-main"><% } %>
+
+<style>
+    :root { --green: #4a5225; --bg: #f4f5f3; --white: #fff; --border: #e2e5e0; --text: #1a1a1a; --muted: #6b7280; }
+    .orders-wrap { overflow-x: auto; }
+    .orders-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    .orders-table th { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); padding: 12px 16px; border-bottom: 2px solid var(--border); text-align: left; background: var(--bg); }
+    .orders-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 0.9rem; }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .orders-table tr:hover td { background: #fafafa; }
+    .product-cell { display: flex; align-items: center; gap: 12px; }
+    .product-cell img { width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; }
+    .prod-name { font-weight: 500; font-size: 0.88rem; color: var(--text); }
+    .prod-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #fff; }
+    .badge-pending { background: #f59e0b; }
+    .badge-processing { background: #3b82f6; }
+    .badge-shipped { background: var(--green); }
+    .badge-delivered { background: #10b981; }
+    .badge-cancelled { background: #ef4444; }
+    .badge-return-request { background: #f97316; }
+    .badge-returned { background: #8b5cf6; }
+    .btn-view { padding: 7px 14px; background: transparent; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; }
+    .btn-view:hover { border-color: var(--green); color: var(--green); background: #f2f4eb; }
+    .price-col { font-weight: 600; color: var(--text); }
+    .price-col .discount { font-size: 0.78rem; color: #10b981; font-weight: 400; }
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .empty-state i { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+    .empty-state a { color: var(--green); font-weight: 600; text-decoration: none; }
+    /* Pagination */
+    .pgn { display: flex; justify-content: center; gap: 6px; margin-top: 20px; }
+    .pgn a, .pgn span { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border); color: var(--text); text-decoration: none; transition: all 0.2s; background: var(--white); }
+    .pgn a:hover { border-color: var(--green); color: var(--green); }
+    .pgn .active-page { background: var(--green); color: #fff; border-color: var(--green); }
+    .pgn .disabled-page { opacity: 0.4; pointer-events: none; }
+</style>
+
+<h2 class="page-title">My Orders</h2>
+
+<div class="card" style="padding: 0; overflow:hidden;">
+    <% if (orders && orders.length > 0) { %>
+    <div class="orders-wrap">
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order Info</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-size:0.82rem;">Order #<%= order.orderId %></div>
+                        <div style="font-size:0.78rem;color:var(--muted);margin-top:3px;"><%= new Date(order.createdOn).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                    </td>
+                    <td>
+                        <% order.orderedItems.forEach(item => { %>
+                        <div class="product-cell" style="margin-bottom:8px; cursor: pointer;" onclick="goToProduct('<%= item.product?._id || '' %>')">
+                            <img src="<%= (item.product && item.product.productImage && item.product.productImage[0] && item.product.productImage[0].startsWith('http')) ? item.product.productImage[0] : '/uploads/product-images/' + (item.product?.productImage?.[0] || 'default.jpg') %>"
+                                alt="<%= item.product?.productName || 'Product' %>"
+                                onerror="this.style.display='none'">
+                            <div>
+                                <div class="prod-name" style="text-decoration: underline; text-underline-offset: 2px;"><%= item.product?.productName || 'Product Unavailable' %></div>
+                                <div class="prod-meta">Qty: <%= item.quantity %> &middot; ₹<%= item.price %></div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </td>
+                    <td>
+                        <div class="price-col">₹<%= order.finalAmount %></div>
+                        <% if (order.discount > 0) { %><div class="discount">−₹<%= order.discount %> off</div><% } %>
+                    </td>
+                    <td>
+                        <span class="badge badge-<%= order.status.toLowerCase().replace(/\s+/g, '-') %>"><%= order.status %></span>
+                    </td>
+                    <td>
+                        <button onclick="viewOrderDetails('<%= order.orderId %>')" class="btn-view">Details</button>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <% } else { %>
+    <div class="empty-state">
+        <i class="fa-regular fa-bag-shopping"></i>
+        <p style="margin-bottom:6px;">No orders yet.</p>
+        <a href="/shop">Start shopping</a>
+    </div>
+    <% } %>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="pgn">
+    <a href="<%= !pagination.hasPreviousPage ? '#' : '/orders?page=' + pagination.previousPage %>" class="<%= !pagination.hasPreviousPage ? 'disabled-page' : '' %>"><i class="fa-solid fa-angle-left"></i></a>
+    <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+    <a href="/orders?page=<%= i %>" class="<%= i === pagination.currentPage ? 'active-page' : '' %>"><%= i %></a>
+    <% } %>
+    <a href="<%= !pagination.hasNextPage ? '#' : '/orders?page=' + pagination.nextPage %>" class="<%= !pagination.hasNextPage ? 'disabled-page' : '' %>"><i class="fa-solid fa-angle-right"></i></a>
+</div>
+<% } %>
+
+<script>
+
+    function viewOrderDetails(orderId) {
+        if (!orderId) return;
+        window.location.href = `/orders/${orderId}`;
+    }
+
+    async function goToProduct(productId) {
+        if (!productId || productId === 'undefined') {
+            Swal.fire({ title: 'Product Unavailable', text: 'This product has been removed from our catalog.', icon: 'error', confirmButtonColor: '#111111' });
+            return;
         }
-
-        :root {
-            --primary-color: #3b7254;
-            --secondary-color: #f5f5f5;
-            --text-color: #333;
+        try {
+            const response = await fetch(`/productDetails?id=${productId}`, { method: 'HEAD' });
+            if (response.redirected && response.url.includes('/shop')) {
+                Swal.fire({ title: 'Product Unavailable', text: 'This product is currently unavailable or out of stock.', icon: 'error', confirmButtonColor: '#111111' });
+            } else {
+                window.location.href = `/productDetails?id=${productId}`;
+            }
+        } catch (e) {
+            window.location.href = `/productDetails?id=${productId}`;
         }
+    }
+</script>
 
-        body {
-            background-color: #f0f0f0;
-        }
-
-        .header {
-            background-color: var(--primary-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .main-container {
-            display: flex;
-            min-height: calc(100vh - 64px);
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: white;
-            padding: 1rem;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin: 1rem 0;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem;
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-menu a:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .content {
-            flex: 1;
-            padding: 2rem;
-        }
-
-        /* Additional styles for the orders table */
-        .orders-table-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-top: 2rem;
-            overflow-x: auto;
-        }
-
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-
-        .orders-table th {
-            background-color: #f8f9fa;
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .orders-table td {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .product-cell {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .product-image {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            color: white;
-        }
-
-        .status-pending { background-color: #f0ad4e; }
-        .status-processing { background-color: #5bc0de; }
-        .status-shipped { background-color: #3b7254; }
-        .status-delivered { background-color: #5cb85c; }
-        .status-cancelled { background-color: #d9534f; }
-        .status-return-request { background-color: #ff9800; }
-        .status-returned { background-color: #9c27b0; }
-
-        .view-details-btn {
-            padding: 0.5rem 1rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .page-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .page-header h1 {
-            font-size: 1.5rem;
-            color: var(--text-color);
-        }
-
-        .txt {
-            text-decoration: none;
-            color: white;
-        }
-
-        /* Pagination styles */
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-            padding: 1rem;
-        }
-
-        .pagination {
-            display: flex;
-            list-style: none;
-            gap: 0.5rem;
-        }
-
-        .pagination li a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: white;
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            transition: all 0.3s;
-        }
-
-        .pagination li a:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .pagination li.active a {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .pagination li.disabled a {
-            color: #adb5bd;
-            pointer-events: none;
-            background-color: #f8f9fa;
-        }
-
-        .no-orders {
-            padding: 2rem;
-            text-align: center;
-            color: #6c757d;
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <div class="logo">Brossoc</div>
-        <nav class="nav-menu">
-            <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-            <a href="/about">About us</a>
-            <a href="/contact">Contact us</a>
-        </nav>
-        <div class="nav-icons">
-            <a href="/wishlist" class="txt"><span><i class="fa-solid fa-heart"></i></span></a>
-            <a href="/userProfile" class="txt"><span><i class="fa-solid fa-user"></i></span></a>
-            <a href="/cart" class="txt"><span><i class="fa-solid fa-cart-shopping"></i></span></a>
-        </div>
-    </header>
-
-    <div class="main-container">
-        <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/userProfile"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
-                <li><a href="/orders"><i class="fa-solid fa-box"></i> Orders</a></li>
-                <li><a href="/addresses"><i class="fa-solid fa-location-dot"></i> My Address</a></li>
-                <li><a href="/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a></li>
-                <li><a href="/referral"><i class="fa-sharp fa-solid fa-users"></i> Referral</a></li>
-                <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-            </ul>
-        </aside>
-
-        <main class="content">
-            <div class="page-header">
-                <h1>My Orders</h1>
-            </div>
-
-            <div class="orders-table-container">
-                <% if (orders && orders.length > 0) { %>
-                    <table class="orders-table">
-                        <thead>
-                            <tr>
-                                <th>Order Details</th>
-                                <th>Products</th>
-                                <th>Price Details</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% orders.forEach(order => { %>
-                                <tr>
-                                    <td>
-                                        <div class="order-date">
-                                            Order Date: <%= new Date(order.createdOn).toLocaleDateString() %>
-                                        </div>
-                                        <div>Order ID: #<%= order.orderId %></div>
-                                    </td>
-                                    <td>
-                                        <% order.orderedItems.forEach(item => { %>
-                                            <div class="product-cell">
-                                                <img src="/uploads/product-images/<%= item.product?.productImage?.[0] || 'default.jpg' %>"
-                                                    alt="<%= item.product?.productName || 'Product' %>"
-                                                    class="product-image"
-                                                    onerror="this.src='/path/to/default/image.jpg'">
-                                                <div class="product-details">
-                                                    <div><%= item.product?.productName || 'Product Unavailable' %></div>
-                                                    <div class="order-date">
-                                                        Qty: <%= item.quantity %> 
-                                                        (Total: ₹<%= item.price %>)
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% }); %>
-                                    </td>
-                                    <td>
-                                        <div class="price-details">
-                                            <div>Total: ₹<%= order.totalPrice %></div>
-                                            <% if (order.discount > 0) { %>
-                                                <div>Discount: ₹<%= order.discount %></div>
-                                            <% } %>
-                                            <div class="final-price">Final Amount: ₹<%= order.finalAmount %></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge status-<%= order.status.toLowerCase().replace(/\s+/g, '-') %>">
-                                            <%= order.status %>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button onclick="viewOrderDetails('<%= order.orderId %>')" 
-                                                class="view-details-btn">
-                                            View Details
-                                        </button>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                <% } else { %>
-                    <div class="no-orders">
-                        <p>You don't have any orders yet.</p>
-                    </div>
-                <% } %>
-            </div>
-
-            <!-- Pagination -->
-            <% if (pagination && pagination.totalPages > 1) { %>
-                <div class="pagination-container">
-                    <ul class="pagination">
-                        <li class="<%= !pagination.hasPreviousPage ? 'disabled' : '' %>">
-                            <a href="<%= !pagination.hasPreviousPage ? '#' : '/orders?page=' + pagination.previousPage %>">
-                                <i class="fa-solid fa-angle-left"></i>
-                            </a>
-                        </li>
-                        
-                        <% for(let i = 1; i <= pagination.totalPages; i++) { %>
-                            <li class="<%= i === pagination.currentPage ? 'active' : '' %>">
-                                <a href="/orders?page=<%= i %>"><%= i %></a>
-                            </li>
-                        <% } %>
-                        
-                        <li class="<%= !pagination.hasNextPage ? 'disabled' : '' %>">
-                            <a href="<%= !pagination.hasNextPage ? '#' : '/orders?page=' + pagination.nextPage %>">
-                                <i class="fa-solid fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            <% } %>
         </main>
     </div>
-
-    <script>
-        function viewOrderDetails(orderId) {
-            if (!orderId) {
-                console.error('Order ID is required');
-                return;
-            }
-
-            fetch(`/orders/${orderId}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'text/html, application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json().then(data => {
-                        if (data.success) {
-                            window.location.href = `/orders/${orderId}`;
-                        } else {
-                            throw new Error(data.message || 'Failed to fetch order details');
-                        }
-                    });
-                } else {
-                    window.location.href = `/orders/${orderId}`;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to load order details: ' + error.message);
-            });
-        }
-    </script>
 </body>
 </html>

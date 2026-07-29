@@ -1,0 +1,89 @@
+<!-- Admin Sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<aside class="admin-sidebar" id="adminSidebar">
+  <a href="/admin/sales-report" class="sidebar-brand">
+    <span class="sidebar-brand-text" style="font-family:'Playfair Display',serif; font-size:1.5rem; letter-spacing:2px; text-transform:uppercase; font-weight:700;">BROSSOC</span>
+  </a>
+
+  <ul class="sidebar-nav">
+    <li class="nav-section-label">Main</li>
+    <li class="nav-item">
+      <a href="/admin/sales-report" class="nav-link <%= locals.activePage === 'dashboard' ? 'active' : '' %>">
+        Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/admin/orders" class="nav-link <%= locals.activePage === 'orders' ? 'active' : '' %>">
+        Orders
+      </a>
+    </li>
+
+    <li class="nav-section-label">Catalogue</li>
+    <li class="nav-item">
+      <a href="/admin/products" class="nav-link <%= locals.activePage === 'products' ? 'active' : '' %>">
+        Products
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/admin/addProducts" class="nav-link <%= locals.activePage === 'addProduct' ? 'active' : '' %>">
+        Add Product
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/admin/category" class="nav-link <%= locals.activePage === 'category' ? 'active' : '' %>">
+        Categories
+      </a>
+    </li>
+
+    <li class="nav-section-label">Marketing</li>
+    <li class="nav-item">
+      <a href="/admin/coupons" class="nav-link <%= locals.activePage === 'coupons' ? 'active' : '' %>">
+        Coupons
+      </a>
+    </li>
+
+    <li class="nav-section-label">Users</li>
+    <li class="nav-item">
+      <a href="/admin/users" class="nav-link <%= locals.activePage === 'users' ? 'active' : '' %>">
+        Customers
+      </a>
+    </li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <a href="#" onclick="confirmLogout(event)" class="nav-link" style="color: #dc2626; font-weight: 600;">
+      Logout
+    </a>
+  </div>
+</aside>
+
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById('adminSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function confirmLogout(event) {
+  event.preventDefault();
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: 'Sign Out?',
+      text: "You will be logged out of the administrative dashboard.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, log out',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/admin/logout';
+      }
+    });
+  } else {
+    if (confirm('Are you sure you want to log out?')) {
+      window.location.href = '/admin/logout';
+    }
+  }
+}
+</script>

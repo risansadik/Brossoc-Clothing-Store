@@ -1,330 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Coupons</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coupons — Brossoc Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin-assets/css/admin.css?v=4">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    if (typeof Swal !== 'undefined') {
+      const originalSwalFire = Swal.fire;
+      Swal.fire = function() {
+        let opts = typeof arguments[0] === 'string' ? { title: arguments[0], text: arguments[1], icon: arguments[2] } : { ...arguments[0] };
+        const requiresResponse = opts.showCancelButton || opts.showDenyButton || opts.input || (opts.allowOutsideClick === false && !opts.timer);
+        if (!requiresResponse && opts.toast === undefined && !opts.timerProgressBar) {
+          opts.toast = true; opts.position = 'top-end'; opts.showConfirmButton = false; opts.timer = opts.timer || 2500; opts.timerProgressBar = true;
+          opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+        } else if (!opts.toast) {
+          opts.customClass = { ...opts.customClass, popup: 'boxy-modal', confirmButton: 'btn-primary', cancelButton: 'btn-secondary' };
+          opts.buttonsStyling = false;
+        } else {
+          opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
         }
+        return originalSwalFire.call(Swal, opts);
+      };
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+    
+    :root {
+      --bg-primary: #f4f5f3;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-hover: #f1f3f5;
+      --accent: #111111;
+      --text-primary: #1a1a1a;
+      --text-secondary: #4b5563;
+      --text-muted: #6b7280;
+      --border: #d1d5db;
+      --border-light: #e5e7eb;
+      --radius: 0px;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1d21;
-            color: #fff;
-        }
+    body { background-color: var(--bg-primary); }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; letter-spacing: 0.5px; }
+    .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 0.5px; }
+    
+    /* Boxy Modal CSS */
+    .swal2-popup.boxy-modal { border-radius: 0 !important; border: 1px solid var(--border) !important; padding: 20px !important; width: auto !important; max-width: 380px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; }
+    .swal2-icon { transform: scale(0.65) !important; margin: 10px auto 10px auto !important; border: none !important; }
+    .swal2-success { border-color: var(--text-primary) !important; color: var(--text-primary) !important; }
+    .swal2-success [class^="swal2-success-line"] { background-color: var(--text-primary) !important; }
+    .swal2-success .swal2-success-ring { display: none !important; }
+    .swal2-error { border-color: transparent !important; color: var(--text-primary) !important; }
+    .swal2-error [class^="swal2-x-mark-line"] { background-color: var(--text-primary) !important; }
+    .swal2-warning { border-color: transparent !important; color: var(--text-primary) !important; }
+    .swal2-info { border-color: transparent !important; color: var(--text-primary) !important; }
+    .swal2-title { font-family: 'Inter', sans-serif !important; font-size: 1.1rem !important; color: var(--text-primary) !important; font-weight: 700 !important; margin-bottom: 8px !important; padding: 0 !important; }
+    .swal2-html-container { font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; color: var(--text-muted) !important; margin: 0 0 16px 0 !important; padding: 0 !important; }
+    .swal2-actions { margin-top: 0 !important; gap: 8px !important; }
+    .swal2-confirm.btn-primary { background: var(--text-primary) !important; color: #fff !important; border-radius: 0 !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: none !important; }
+    .swal2-cancel.btn-secondary { background: var(--bg-primary) !important; color: var(--text-primary) !important; border-radius: 0 !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: 1px solid var(--border) !important; }
+    .swal2-popup.boxy-toast { border-radius: 0 !important; padding: 12px 16px !important; border: 1px solid var(--border) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; font-family: 'Inter', sans-serif !important; width: auto !important; }
+    .swal2-toast .swal2-title { font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
 
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
+    .card { background: var(--bg-card); border: 1px solid #111111; border-radius: 0; box-shadow: none; }
+    .table-wrapper { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+    .admin-table { width: 100%; min-width: 900px; }
+    .admin-table th { background: var(--bg-primary); border-bottom: 1px solid #111111; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .admin-table td { border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+    
+    .badge { border-radius: 0; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.65rem; padding: 4px 8px; border: none; }
+    .badge-success { background: #4a5225; color: #fff; }
+    .badge-warning { background: #f59e0b; color: #fff; }
+    .badge-danger { background: #111111; color: #fff; }
+    .badge-purple { background: #111111; color: #fff; }
+    .badge-info { background: transparent; color: #111111; border: 1px solid #111111; }
+    .badge-muted { background: var(--bg-hover); color: var(--text-muted); }
 
-        .sidebar {
-            width: 250px;
-            background-color: #1a1d21;
-            border-right: 1px solid #2d3339;
-            padding: 20px;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            padding: 12px 0;
-            color: #9ba1a6;
-            cursor: pointer;
-        }
-
-        .sidebar-menu li:hover {
-            color: #fff;
-        }
-
-        .sidebar-menu li.active {
-            color: #fff;
-            background-color: #2d3339;
-            border-radius: 4px;
-            padding: 12px 10px;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            width: 400px;
-            padding: 10px;
-            border-radius: 4px;
-            border: none;
-            background-color: #2d3339;
-            color: #fff;
-        }
-
-        .add-btn {
-            padding: 10px 20px;
-            background-color: #0095ff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .coupon-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .coupon-table th {
-            background-color: #2d3339;
-            padding: 12px;
-            text-align: left;
-        }
-
-        .coupon-table td {
-            padding: 12px;
-            border-bottom: 1px solid #2d3339;
-        }
-
-        .status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .active {
-            background-color: #28a745;
-        }
-
-        .inactive {
-            background-color: #dc3545;
-        }
-
-        .expired {
-            background-color: #6c757d;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .edit-btn {
-            background-color: #0095ff;
-            color: #fff;
-        }
-
-        .delete-btn {
-            background-color: #dc3545;
-            color: #fff;
-        }
-
-        .description-cell {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        /* Add these styles to your existing CSS */
-.pagination-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.page-link {
-    padding: 8px 12px;
-    margin: 0 5px;
-    background-color: #2d3339;
-    color: #fff;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.page-link:hover {
-    background-color: #0095ff;
-}
-
-.page-link.current {
-    background-color: #0095ff;
-    cursor: default;
-}
-
-.page-link.disabled {
-    background-color: #1a1d21;
-    color: #6c757d;
-    cursor: not-allowed;
-}
-
-.page-info {
-    color: #9ba1a6;
-    font-size: 14px;
-}
-    </style>
+    .search-bar { position: relative; border: none !important; border-bottom: 1px solid #111111 !important; border-radius: 0 !important; display: flex; align-items: center; width: 280px; }
+    .search-bar input { width: 100%; border: none !important; background: transparent !important; padding: 10px 0 10px 32px !important; font-family: inherit; font-size: 0.9rem; color: var(--text-primary); outline: none !important; box-shadow: none !important; border-radius: 0 !important; margin: 0 !important; }
+    .search-bar .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    
+    .btn { border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
+  
+    @media (max-width: 768px) {
+      .admin-main { margin-left: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; }
+      .admin-topbar { flex-direction: column; align-items: flex-start; height: auto; padding: 16px; gap: 16px; }
+      .topbar-actions { width: 100%; display: flex; gap: 8px; justify-content: stretch; }
+      .topbar-actions .btn { flex: 1; text-align: center; justify-content: center; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .page-header form { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+      .search-bar { width: 100% !important; flex: 1; min-width: 150px; }
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <ul class="sidebar-menu">
-                <a href="/admin/sales-report" style="text-decoration: none; color: white;"><li>Dashboard</li></a>
-                <a href="/admin/users" style="text-decoration: none; color: white;"><li>Customers</li></a>
-                <a href="/admin/category" style="text-decoration: none; color: white;"><li>Category</li></a>
-                <a href="/admin/addProducts" style="text-decoration: none; color: white;"><li>addProduct</li></a>
-                <a href="/admin/products" style="text-decoration: none; color: white;"><li>Product</li></a>
-                <a href="/admin/coupons" style="text-decoration: none; color: white;"><li>Coupon</li></a>
-                <a href="#" style="text-decoration: none; color: white;"><li>Banner</li></a>
-                <a href="/admin/orders" style="text-decoration: none; color: white;"><li>Orders</li></a>
-                <a href="/admin/logout" style="text-decoration: none; color: white;" class="active"><li>Logout</li></a>
-            
-            </ul>
+<% locals.activePage = 'coupons'; %>
+<%- include('../../views/partials/admin/sidebar.ejs') %>
+
+<main class="admin-main">
+  <header class="admin-topbar">
+    <div class="flex-center gap-3">
+      <button class="btn btn-ghost btn-icon hamburger" onclick="toggleSidebar()" style="padding:4px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="topbar-title">Coupons</div>
+    </div>
+    <div class="topbar-actions">
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <% if (successMessage) { %>
+      <script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon:'success', title:'Success!', text:'<%= successMessage %>', timer:2000, showConfirmButton:false }));</script>
+    <% } %>
+    <% if (errorMessage) { %>
+      <script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon:'error', title:'Error', text:'<%= errorMessage %>', timer:2000, showConfirmButton:false }));</script>
+    <% } %>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Coupon Management</h1>
+        <p class="page-subtitle">Create and manage discount coupons</p>
+      </div>
+      <div class="flex-center gap-2">
+        <div class="search-bar">
+          <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+          <input type="text" id="couponSearch" placeholder="Search coupons…" oninput="filterCoupons(this.value)">
         </div>
-
-        <div class="main-content">
-
-            <% if (successMessage) { %>
-                <script>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: '<%= successMessage %>',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                </script>
-            <% } %>
-            
-            <% if (errorMessage) { %>
-                <script>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: '<%= errorMessage %>',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                </script>
-            <% } %>
-            <div class="header">
-                <h1>Coupons</h1>
-                <div>
-                    <input type="text" placeholder="Search coupons..." class="search-bar">
-                    <a href="/admin/addCoupons"><button class="add-btn">Add Coupon</button></a>
-                </div>
-            </div>
-
-            <table class="coupon-table">
-                <thead>
-                    <tr>
-                        <th>Code</th>
-                        <th>Description</th>
-                        <th>Discount</th>
-                        <th>Min Amount</th>
-                        <th>Max Amount</th>
-                        <th>Expire On</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% coupons.forEach(coupon => { %>
-                    <tr>
-                        <td><%= coupon.code %></td>
-                        <td class="description-cell"><%= coupon.description %></td>
-                        <td>
-                            <% if (coupon.discountPercentage) { %>
-                                <%= coupon.discountPercentage %>%
-                            <% } else if (coupon.offerPrice) { %>
-                                ₹<%= coupon.offerPrice %>
-                            <% } %>
-                        </td>
-                        <td>₹<%= coupon.minimumPurchase %></td>
-                        <td>₹<%= coupon.maximumPurchase %></td>
-                        <td><%= new Date(coupon.expireOn).toLocaleDateString() %></td>
-                        <td><span class="status <%= coupon.status %>"><%= coupon.status %></span></td>
-                        <td>
-                            <button class="action-btn delete-btn" onclick="confirmDelete('<%= coupon._id %>')">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
+        <a href="/admin/addCoupons" class="btn btn-primary btn-sm">CREATE COUPON</a>
+      </div>
     </div>
 
-    <div class="pagination-container">
-        <% if (totalPages > 1) { %>
-            <div class="pagination">
-                <% if (hasPrevPage) { %>
-                    <a href="/admin/coupons?page=<%= prevPage %>" class="page-link">&laquo; Previous</a>
-                <% } else { %>
-                    <span class="page-link disabled">&laquo; Previous</span>
-                <% } %>
-                
-                <% for(let i = 1; i <= totalPages; i++) { %>
-                    <% if (i === currentPage) { %>
-                        <span class="page-link current"><%= i %></span>
-                    <% } else { %>
-                        <a href="/admin/coupons?page=<%= i %>" class="page-link"><%= i %></a>
-                    <% } %>
-                <% } %>
-                
-                <% if (hasNextPage) { %>
-                    <a href="/admin/coupons?page=<%= nextPage %>" class="page-link">Next &raquo;</a>
-                <% } else { %>
-                    <span class="page-link disabled">Next &raquo;</span>
-                <% } %>
-            </div>
-            <div class="page-info">
-                Page <%= currentPage %> of <%= totalPages %>
-            </div>
+    <div class="card" style="padding:0;">
+      <div class="table-wrapper">
+        <table class="admin-table" id="couponTable">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Description</th>
+              <th>Discount</th>
+              <th>Min Purchase</th>
+              <th>Max Purchase</th>
+              <th>Expires</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% coupons.forEach(coupon => { %>
+              <tr>
+                <td>
+                  <span class="badge badge-purple" style="font-family:monospace;letter-spacing:1px;"><%= coupon.code %></span>
+                </td>
+                <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-secondary);">
+                  <%= coupon.description %>
+                </td>
+                <td class="fw-600">
+                  <% if (coupon.discountPercentage) { %>
+                    <span class="badge badge-warning"><%= coupon.discountPercentage %>% OFF</span>
+                  <% } else if (coupon.offerPrice) { %>
+                    <span class="badge badge-info">₹<%= coupon.offerPrice %> OFF</span>
+                  <% } %>
+                </td>
+                <td style="color:var(--text-secondary);">₹<%= coupon.minimumPurchase %></td>
+                <td style="color:var(--text-secondary);">₹<%= coupon.maximumPurchase %></td>
+                <td style="color:var(--text-secondary);">
+                  <% const expiry = new Date(coupon.expireOn); const now = new Date(); %>
+                  <span style="color:<%= expiry < now ? 'var(--danger)' : 'inherit' %>">
+                    <%= expiry.toLocaleDateString() %>
+                  </span>
+                </td>
+                <td>
+                  <span class="badge <%= coupon.status === 'active' ? 'badge-success' : coupon.status === 'inactive' ? 'badge-danger' : 'badge-muted' %>">
+                    <%= coupon.status %>
+                  </span>
+                </td>
+                <td>
+                  <div style="display:flex; gap:8px;">
+                    <a href="/admin/editCoupon?id=<%= coupon._id %>" class="btn btn-outline btn-sm">EDIT</a>
+                    <button class="btn btn-outline btn-sm" onclick="confirmDelete('<%= coupon._id %>')">
+                      DELETE
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <% if (totalPages > 1) { %>
+      <div class="pagination">
+        <% if (hasPrevPage) { %>
+          <a href="/admin/coupons?page=<%= prevPage %>" class="page-link">‹</a>
+        <% } else { %>
+          <span class="page-link disabled">‹</span>
         <% } %>
-    </div>
+        <% for(let i = 1; i <= totalPages; i++) { %>
+          <a href="/admin/coupons?page=<%= i %>" class="page-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+        <% if (hasNextPage) { %>
+          <a href="/admin/coupons?page=<%= nextPage %>" class="page-link">›</a>
+        <% } else { %>
+          <span class="page-link disabled">›</span>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</main>
 
-    <script>
-        function confirmDelete(couponId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Create and submit form programmatically
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = `/admin/deleteCoupon/${couponId}`;
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            });
-        }
-        </script>
+<script>
+  function filterCoupons(term) {
+    const lc = term.toLowerCase();
+    document.querySelectorAll('#couponTable tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(lc) ? '' : 'none';
+    });
+  }
+
+  function confirmDelete(couponId) {
+    Swal.fire({ title:'Delete Coupon?', text:"This can't be undone.", icon:'warning',
+      showCancelButton:true, confirmButtonText:'Yes, delete it!'
+    }).then(r => {
+      if (r.isConfirmed) {
+        const f = document.createElement('form');
+        f.method = 'POST'; f.action = `/admin/deleteCoupon/${couponId}`;
+        document.body.appendChild(f); f.submit();
+      }
+    });
+  }
+</script>
 </body>
 </html>

@@ -29,9 +29,7 @@ const reviewSchema = new Schema({
     }
 }, { timestamps: true });
 
-
 reviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
-
 
 reviewSchema.statics.getReviewStats = async function(productId) {
     const stats = await this.aggregate([

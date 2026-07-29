@@ -6,7 +6,6 @@ const customerInfo = async (req, res) => {
         const limit = 4;
         const search = req.query.search ? req.query.search.trim() : "";
 
-   
         const searchQuery = {
             isAdmin: false,
             $or: [
@@ -16,14 +15,12 @@ const customerInfo = async (req, res) => {
             ]
         };
 
-     
         const data = await User.find(searchQuery)
             .limit(limit)
             .skip((page - 1) * limit);
 
         const count = await User.countDocuments(searchQuery);
         const totalPages = Math.ceil(count / limit);
-
 
         if (page > totalPages && totalPages > 0) {
             return res.redirect(`/admin/users?page=${totalPages}&search=${search}`);

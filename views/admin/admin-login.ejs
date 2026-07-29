@@ -1,93 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brossoc Admin — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --green: #4a5225;
+            --green-dark: #3a411d;
+            --bg: #f4f5f3;
+            --white: #ffffff;
+            --border: #e2e5e0;
+            --text: #1a1a1a;
+            --muted: #6b7280;
+        }
+        ::-webkit-scrollbar { width: 0px; background: transparent; display: none; }
+        * { scrollbar-width: none; }
         body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #1a1e23;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
         }
-
-        .login-container {
+        .auth-image-container {
             width: 100%;
-            max-width: 400px;
-            padding: 20px;
+            height: 100%;
+            min-height: 100vh;
+            background: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+            padding: 40px;
         }
-
-        h1 {
-            color: white;
+        .auth-image-container h1 {
+            color: #fff;
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 20px;
-            font-weight: 600;
+            letter-spacing: 1px;
+            line-height: 1.2;
         }
-
-        .form-group {
-            margin-bottom: 20px;
+        .auth-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
         }
-
-        label {
+        .auth-card {
+            width: 100%;
+            max-width: 380px;
+        }
+        .auth-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
             display: block;
-            color: #9ca3af;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .auth-title {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text);
             margin-bottom: 8px;
-            font-size: 14px;
+            font-family: 'Playfair Display', serif;
         }
-
-        input {
+        .auth-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 40px; line-height: 1.5; }
+        
+        .form-field { margin-bottom: 24px; position: relative; }
+        .form-field label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+        .form-field input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #374151;
-            background-color: #1f2937;
-            border-radius: 4px;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #0284c7;
-            color: white;
+            padding: 8px 0;
             border: none;
-            border-radius: 4px;
-            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            background: transparent;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--text);
+            box-shadow: none;
+        }
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: var(--text);
+            color: #fff;
+            border: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
             cursor: pointer;
-            margin-top: 10px;
+            transition: background 0.3s;
+            margin-top: 32px;
         }
-
-        button:hover {
-            background-color: #0369a1;
+        .btn-primary:hover {
+            background: var(--green);
         }
-    </style>
+        
+        .alert {
+            padding: 12px; margin-bottom: 24px; font-size: 0.85rem; border: 1px solid #fca5a5;
+            background: #fef2f2; color: #dc2626; display: flex; align-items: center; gap: 8px;
+        }
+        
+        @media (max-width: 900px) {
+            body { grid-template-columns: 1fr; }
+            .auth-image-container { display: none; }
+            .auth-content { padding: 40px 24px; }
+        }
+    
+    @media (max-width: 768px) {
+      .admin-main { margin-left: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; }
+      .admin-topbar { flex-direction: column; align-items: flex-start; height: auto; padding: 16px; gap: 16px; }
+      .topbar-actions { width: 100%; display: flex; gap: 8px; justify-content: stretch; }
+      .topbar-actions .btn { flex: 1; text-align: center; justify-content: center; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .page-header form { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+      .search-bar { width: 100% !important; flex: 1; min-width: 150px; }
+    }
+</style>
 </head>
 <body>
-    <div class="login-container">
-        <h1>ADMIN LOGIN</h1>
-        <form action="/admin/login" method="post">
-
-            <% if (message) { %>
-                <div style="color: red;"><%= message %></div>
+    <div class="auth-image-container">
+        <h1>Administrative<br>Portal</h1>
+    </div>
+    
+    <div class="auth-content">
+        <div class="auth-card">
+            <a href="/" class="auth-brand">BROSSOC</a>
+            
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-sub">Please enter your credentials to access the administrative dashboard.</p>
+            
+            <% if (locals.message) { %>
+            <div class="alert"><i class="fa-solid fa-circle-exclamation"></i> <%= message %></div>
             <% } %>
-            <div class="form-group">
-                <label for="email">email</label>
-                <input type="email" id="email" name="email">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password">
-            </div>
-            <button type="submit">LOGIN</button>
-        </form>
+
+            <form action="/admin/login" method="POST">
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" name="email" required autocomplete="email" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                </div>
+
+                <button type="submit" class="btn-primary">Sign In to Dashboard</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

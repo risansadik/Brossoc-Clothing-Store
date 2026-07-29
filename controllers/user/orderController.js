@@ -7,13 +7,10 @@ const Coupon = require('../../models/couponSchema');
 const ReturnOrder = require('../../models/returnOrderSchema');
 const Wallet = require('../../models/walletSchema')
 
-
-
 const createOrder = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const { addressId, paymentMethod } = req.body;
-
 
         const addressDocument = await Address.findOne({
             _id: addressId,
@@ -27,7 +24,6 @@ const createOrder = async (req, res) => {
             });
         }
 
-
         const cart = await Cart.findOne({ userId })
             .populate('items.productId');
 
@@ -37,7 +33,6 @@ const createOrder = async (req, res) => {
                 message: 'Cart is empty'
             });
         }
-
 
         let totalPrice = 0;
         let orderItems = [];
@@ -62,14 +57,12 @@ const createOrder = async (req, res) => {
             });
         }
 
-
         let finalAmount = totalPrice;
         let couponDetails = {
             couponCode: null,
             couponId: null,
             discountAmount: 0
         };
-
 
         if (cart.appliedCoupon && cart.appliedCoupon.couponId) {
             const coupon = await Coupon.findById(cart.appliedCoupon.couponId);
@@ -95,9 +88,7 @@ const createOrder = async (req, res) => {
             couponApplied: couponDetails
         });
 
-
         await order.save();
-
 
         for (const item of cart.items) {
             await Product.updateOne(
@@ -110,7 +101,6 @@ const createOrder = async (req, res) => {
                 }
             );
         }
-
 
         await Cart.findByIdAndDelete(cart._id);
 
@@ -134,7 +124,6 @@ const createOrder = async (req, res) => {
         });
     }
 };
-
 
 const getUserOrders = async (req, res) => {
     try {
@@ -255,11 +244,9 @@ const cancelOrder = async (req, res) => {
             });
         }
 
-
         order.status = 'Cancelled';
         order.cancellationReason = reason;
         order.cancelledAt = new Date();
-
 
         order.orderedItems.forEach(item => {
             item.status = 'Cancelled';
@@ -302,7 +289,6 @@ const cancelOrder = async (req, res) => {
             }
         }
 
-
         const failedUpdates = inventoryUpdates.filter(update => !update.success);
         if (failedUpdates.length > 0) {
             console.error('Some inventory updates failed:', failedUpdates);
@@ -324,7 +310,6 @@ const cancelOrder = async (req, res) => {
                     });
                 }
 
-
                 await wallet.addRefund(order.finalAmount, order._id);
                 order.paymentStatus = 'refunded';
             } catch (error) {
@@ -332,7 +317,6 @@ const cancelOrder = async (req, res) => {
             }
         }
         await order.save();
-
 
         res.setHeader('Content-Type', 'application/json');
         return res.json({
@@ -348,7 +332,6 @@ const cancelOrder = async (req, res) => {
             stack: error.stack,
             orderId: orderId
         });
-
 
         res.setHeader('Content-Type', 'application/json');
         return res.status(500).json({
@@ -385,12 +368,10 @@ const cancelOrderItem = async (req, res) => {
             });
         }
 
-      
         orderItem.status = 'Cancelled';
         orderItem.cancellationReason = reason;
         orderItem.cancelledAt = new Date();
 
-      
         try {
             const productUpdate = await Product.findOneAndUpdate(
                 {
@@ -417,7 +398,6 @@ const cancelOrderItem = async (req, res) => {
             order.totalPrice = remainingTotal;
             let refundAmount = cancelledItemTotal;
 
-          
             if (order.couponApplied && order.couponApplied.couponId) {
                 const coupon = await Coupon.findById(order.couponApplied.couponId);
                 if (coupon) {
@@ -432,8 +412,7 @@ const cancelOrderItem = async (req, res) => {
                        
                         refundAmount = cancelledItemTotal - originalDiscount;
                         order.discount = 0;
-                        
-                       
+
                         await Coupon.findByIdAndUpdate(
                             coupon._id,
                             { $pull: { userId: userId } }
@@ -457,9 +436,7 @@ const cancelOrderItem = async (req, res) => {
             }
 
             order.finalAmount = order.totalPrice - order.discount;
-            
 
-           
             if (['razorpay', 'wallet'].includes(order.paymentMethod) && order.paymentStatus === 'completed') {
                 try {
                     let wallet = await Wallet.findOne({ userId });
@@ -480,7 +457,6 @@ const cancelOrderItem = async (req, res) => {
                 }
             }
 
-            
             if (remainingActiveItems.length === 0) {
                 order.status = 'Cancelled';
                 order.cancellationReason = 'All items cancelled';
@@ -511,7 +487,7 @@ const cancelOrderItem = async (req, res) => {
             });
 
         } catch (error) {
-            throw new Error(`Failed to process cancellation: ${error.message}`);
+            throw new Error(`Failed to process cancellation: ${error.message}`, { cause: error });
         }
 
     } catch (error) {
@@ -544,12 +520,9 @@ const getOrderDetails = async (req, res) => {
             throw new Error('Order not found');
         }
 
-
         let addressDocument = null;
 
-
         addressDocument = await Address.findById(order.address);
-
 
         if (!addressDocument) {
             addressDocument = await Address.findOne({
@@ -557,7 +530,6 @@ const getOrderDetails = async (req, res) => {
                 'address._id': order.address
             });
         }
-
 
         let addressInfo;
         if (addressDocument) {
@@ -604,7 +576,6 @@ const getOrderDetails = async (req, res) => {
             (order.paymentMethod === 'cod' && order.status === 'Delivered') ||
             (order.paymentMethod !== 'cod' && ['Shipped', 'Delivered'].includes(order.status))
         );
-
 
         const processedOrder = {
             _id: order._id,
@@ -681,8 +652,6 @@ const submitReturnRequest = async (req, res) => {
         const { orderId, returnReason } = req.body;
         const userId = req.user._id;
 
-
-
         const order = await Order.findOne({ orderId: orderId, userId });
 
         if (!order) {
@@ -699,7 +668,6 @@ const submitReturnRequest = async (req, res) => {
             });
         }
 
-
         const returnOrder = new ReturnOrder({
             orderId: order._id,
             userId,
@@ -708,7 +676,6 @@ const submitReturnRequest = async (req, res) => {
         });
 
         await returnOrder.save();
-
 
         order.status = 'Return Request';
         await order.save();
@@ -747,7 +714,6 @@ const processReturnRequest = async (req, res) => {
             returnOrder.returnStatus = 'Approved';
             returnOrder.processedDate = new Date();
 
-
             order.status = 'Returned';
             if (['razorpay', 'wallet'].includes(order.paymentMethod) && order.paymentStatus === 'completed') {
                 try {
@@ -759,7 +725,6 @@ const processReturnRequest = async (req, res) => {
                             transactions: []
                         });
                     }
-
 
                     await wallet.addRefund(order.finalAmount, order._id);
 
@@ -816,8 +781,6 @@ const generateInvoicePDF = async (req, res) => {
         const totalPrice = activeItems.reduce((sum, item) => sum + item.price, 0);
         const finalAmount = totalPrice - (order.discount || 0);
 
-
-
         let addressDocument = await Address.findById(order.address);
 
         if (!addressDocument) {
@@ -826,7 +789,6 @@ const generateInvoicePDF = async (req, res) => {
                 'address._id': order.address
             });
         }
-
 
         let addressInfo;
         if (addressDocument) {
@@ -862,7 +824,6 @@ const generateInvoicePDF = async (req, res) => {
             return res.status(403).json({ success: false, message: 'Invoice not available yet' });
         }
 
-
         return res.json({
             success: true,
             order: {
@@ -886,7 +847,6 @@ const generateInvoicePDF = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to generate invoice' });
     }
 };
-
 
 module.exports = {
 

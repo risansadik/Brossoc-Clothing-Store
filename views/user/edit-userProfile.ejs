@@ -1,368 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../../views/partials/user/profilePartials/header.ejs') %>
+<% if(false) { %><!-- VSCode Linter Trick --><html><body><div class="profile-layout"><main class="profile-main"><% } %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Editor - Alternative Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.css"
-        rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.css" rel="stylesheet">
 
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 
-    <style>
-       * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<style>
+    :root { --green: #4a5225; --bg: #f4f5f3; --white: #fff; --border: #e2e5e0; --text: #1a1a1a; --muted: #6b7280; --danger: #dc2626; }
+    .form-field { margin-bottom: 18px; }
+    .form-field label { display: block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+    .form-field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.93rem; transition: border-color 0.2s, box-shadow 0.2s; }
+    .form-field input:focus { outline: none; border-color: var(--green); background: var(--white); box-shadow: 0 0 0 3px rgba(59,93,80,0.1); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .section-divider { font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin: 24px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .btn-save { display: inline-flex; align-items: center; gap: 8px; padding: 11px 24px; background: var(--green); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-save:hover { background: #3a411d; }
+    @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+</style>
 
-        body {
-            background-color: #f5f5f5;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+<h2 class="page-title">Edit Profile</h2>
 
-        .profile-card {
-            position: relative;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .profile-header h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .profile-section {
-            margin-bottom: 20px;
-        }
-
-        .field-label {
-            display: block;
-            color: #666;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .field-value {
-            background-color: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            color: #333;
-            font-size: 16px;
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .edit-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            margin-bottom: 15px;
-        }
-
-        .edit-input:focus {
-            outline: none;
-            border-color: #2c5840;
-        }
-
-        .edit-form {
-            display: none;
-        }
-
-        .button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-        }
-
-        .edit-button {
-            background-color: #2c5840;
-            color: white;
-        }
-
-        .edit-button:hover {
-            background-color: #2c5840;
-        }
-
-        .save-button {
-            background-color: #2ecc71;
-            color: white;
-        }
-
-        .save-button:hover {
-            background-color: #27ae60;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            background-color: #e0e0e0;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: #666;
-        }
-
-        .back-button {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            color: #2c5840;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            background: none;
-            border: none;
-            padding: 10px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .back-button:hover {
-            transform: translateX(-5px);
-            background-color: rgba(44, 88, 64, 0.1);
-        }
-    </style>
-</head>
-
-<body>
-    <div class="profile-card">
-
-        <a href="/userProfile" class="back-button">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <i class="fa-solid fa-user"></i>
-            </div>
-            <h1>Profile Details</h1>
+<div class="card">
+    <form id="update-user">
+        <div class="form-field">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" value="<%= name || '' %>" placeholder="Your name" required>
         </div>
 
-        <!-- Display Profile -->
-        <div id="profileDisplay">
-            <form id="update-user">
-                <div class="profile-section">
-
-
-
-                    <span class="field-label">Username</span>
-                    <input type="text" class="edit-input" id="name" placeholder="Enter username" name="name"
-                        value="<%=name || ''%>" required>
-
-                    <%if(!isGoogle){%>
-
-
-                        <span class="field-label">Mobile Number</span>
-                        <input type="tel" class="edit-input" id="phone" placeholder="Enter mobile number" name="phone"
-                            value="<%=phone%>" minlength="10">
-
-                        <span class="field-label">Change Password</span>
-                        <input type="password" class="edit-input" id="pass" placeholder="Enter new password" name="pass"
-                            min="8">
-
-                        <span class="field-label">Confirm Password</span>
-                        <input type="password" class="edit-input" id="cPass" placeholder="Confirm new password"
-                            name="cPass" minlength="8">
-                        <%}%>
-
-
-
+        <% if (!isGoogle) { %>
+        <div class="section-divider">Change Password</div>
+        <div class="row-2">
+            <div class="form-field">
+                <label for="pass">New Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="pass" name="pass" placeholder="Leave blank to keep current" minlength="6" style="padding-right: 40px;">
+                    <i class="fa-regular fa-eye" id="togglePass" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--muted);"></i>
                 </div>
-                <button type="submit" class="button edit-button" id="edit-profile">Edit Profile</button>
-            </form>
+            </div>
+            <div class="form-field">
+                <label for="cPass">Confirm Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="cPass" name="cPass" placeholder="••••••••" minlength="6" style="padding-right: 40px;">
+                    <i class="fa-regular fa-eye" id="toggleCPass" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--muted);"></i>
+                </div>
+            </div>
         </div>
+        <% } %>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Handle page reload and navigation
-                window.onpageshow = function (event) {
-                    if (event.persisted) {
-                        window.location.reload();
-                    }
-                };
+        <button type="submit" class="btn-save" id="edit-profile"><i class="fa-solid fa-check"></i> Save Changes</button>
+    </form>
+</div>
 
-                if (window.performance && window.performance.navigation.type === 2) {
-                    window.location.href = '/userProfile';
-                }
+<script>
 
-                const form = document.getElementById('update-user');
-                if (!form) return;
+    document.addEventListener('DOMContentLoaded', function () {
+        window.onpageshow = function (event) { if (event.persisted) window.location.reload(); };
+        if (window.performance && window.performance.navigation.type === 2) { window.location.href = '/userProfile'; }
 
-                form.addEventListener('submit', async function (e) {
-                    e.preventDefault();
+        const form = document.getElementById('update-user');
+        if (!form) return;
 
-                    const userId = "<%=id%>";
-                    const nameInput = document.getElementById('name');
+        const passId = document.getElementById('pass');
+        const cPassId = document.getElementById('cPass');
+        const togglePass = document.getElementById('togglePass');
+        const toggleCPass = document.getElementById('toggleCPass');
 
-                    
-                    const phoneInput = document.getElementById('phone');
-                    const passwordInput = document.getElementById('pass');
-                    const confirmPasswordInput = document.getElementById('cPass');
-
-                 
-                    if (!nameInput || !nameInput.value.trim()) {
-                        await Swal.fire({
-                            icon: 'error',
-                            title: 'Invalid Input',
-                            text: 'Username cannot be blank',
-                            confirmButtonColor: '#2c5840'
-                        });
-                        if (nameInput) nameInput.focus();
-                        return;
-                    }
-
-                    
-                    if (phoneInput) {
-                        if (!phoneInput.value.trim()) {
-                            await Swal.fire({
-                                icon: 'error',
-                                title: 'Invalid Input',
-                                text: 'Mobile number cannot be blank',
-                                confirmButtonColor: '#2c5840'
-                            });
-                            phoneInput.focus();
-                            return;
-                        }
-
-                        if (phoneInput.value.trim().length < 10) {
-                            await Swal.fire({
-                                icon: 'error',
-                                title: 'Invalid Phone Number',
-                                text: 'Mobile number must be at least 10 digits',
-                                confirmButtonColor: '#2c5840'
-                            });
-                            phoneInput.focus();
-                            return;
-                        }
-                    }
-
-                    
-                    if (passwordInput && confirmPasswordInput) {
-                        if (passwordInput.value || confirmPasswordInput.value) {
-                            if (passwordInput.value !== confirmPasswordInput.value) {
-                                await Swal.fire({
-                                    icon: 'error',
-                                    title: 'Password Mismatch',
-                                    text: 'Passwords do not match!',
-                                    confirmButtonColor: '#2c5840'
-                                });
-                                passwordInput.focus();
-                                return;
-                            }
-
-                            if (passwordInput.value.length < 6) {
-                                await Swal.fire({
-                                    icon: 'error',
-                                    title: 'Invalid Password',
-                                    text: 'Password must be at least 6 characters long',
-                                    confirmButtonColor: '#2c5840'
-                                });
-                                passwordInput.focus();
-                                return;
-                            }
-                        }
-                    }
-
-                    
-                    const formData = {
-                        name: nameInput.value.trim(),
-                        phone: phoneInput ? phoneInput.value.trim() : '',
-                        password: passwordInput && passwordInput.value ? passwordInput.value.trim() : '',
-                        cPassword: confirmPasswordInput && confirmPasswordInput.value ? confirmPasswordInput.value.trim() : ''
-                    };
-
-                 
-                    Swal.fire({
-                        title: 'Updating Profile',
-                        text: 'Please wait...',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    try {
-                        const response = await fetch(`/edit-userProfile/${userId}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(formData)
-                        });
-
-                        const data = await response.json();
-
-                        if (data.success) {
-                            await Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'Profile updated successfully',
-                                confirmButtonColor: '#2c5840'
-                            });
-                            window.history.replaceState(null, '', '/userProfile');
-                            window.location.replace('/userProfile');
-                        } else {
-                            await Swal.fire({
-                                icon: 'error',
-                                title: 'Update Failed',
-                                text: data.message || 'Error updating profile',
-                                confirmButtonColor: '#2c5840'
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error updating profile:', error);
-                        await Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'An error occurred while updating your profile',
-                            confirmButtonColor: '#2c5840'
-                        });
-                    }
-                });
+        if (togglePass) {
+            togglePass.addEventListener('click', function() {
+                const type = passId.getAttribute('type') === 'password' ? 'text' : 'password';
+                passId.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
             });
-        </script>
+        }
+        if (toggleCPass) {
+            toggleCPass.addEventListener('click', function() {
+                const type = cPassId.getAttribute('type') === 'password' ? 'text' : 'password';
+                cPassId.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
 
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const userId = "<%= id %>";
+            const nameInput = document.getElementById('name');
+            const phoneInput = document.getElementById('phone');
+            const passwordInput = document.getElementById('pass');
+            const confirmPasswordInput = document.getElementById('cPass');
 
+            if (!nameInput || !nameInput.value.trim()) {
+                await Swal.fire({ icon: 'error', title: 'Invalid Input', text: 'Username cannot be blank', confirmButtonColor: '#4a5225' });
+                if (nameInput) nameInput.focus(); return;
+            }
+            if (passwordInput && confirmPasswordInput && (passwordInput.value || confirmPasswordInput.value)) {
+                if (passwordInput.value !== confirmPasswordInput.value) { await Swal.fire({ icon: 'error', title: 'Password Mismatch', text: 'Passwords do not match!', confirmButtonColor: '#4a5225' }); passwordInput.focus(); return; }
+                if (passwordInput.value.length < 6) { await Swal.fire({ icon: 'error', title: 'Invalid Password', text: 'Password must be at least 6 characters', confirmButtonColor: '#4a5225' }); passwordInput.focus(); return; }
+            }
+
+            const formData = { name: nameInput.value.trim(), password: passwordInput && passwordInput.value ? passwordInput.value.trim() : '', cPassword: confirmPasswordInput && confirmPasswordInput.value ? confirmPasswordInput.value.trim() : '' };
+
+            Swal.fire({ title: 'Saving changes...', allowOutsideClick: false, showConfirmButton: false, willOpen: () => Swal.showLoading() });
+
+            try {
+                const response = await fetch(`/edit-userProfile/${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+                const data = await response.json();
+                if (data.success) {
+                    await Swal.fire({ icon: 'success', title: 'Saved!', text: 'Profile updated successfully', confirmButtonColor: '#4a5225' });
+                    window.history.replaceState(null, '', '/userProfile');
+                    window.location.replace('/userProfile');
+                } else {
+                    await Swal.fire({ icon: 'error', title: 'Update Failed', text: data.message || 'Error updating profile', confirmButtonColor: '#4a5225' });
+                }
+            } catch {
+                await Swal.fire({ icon: 'error', title: 'Error', text: 'An error occurred while updating your profile', confirmButtonColor: '#4a5225' });
+            }
+        });
+    });
+</script>
+
+        </main>
+    </div>
 </body>
-
 </html>

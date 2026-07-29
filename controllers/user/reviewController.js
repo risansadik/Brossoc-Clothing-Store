@@ -40,6 +40,21 @@ const reviewController = {
                 });
             }
 
+            const Order = require('../../models/orderSchema');
+            const hasPurchased = await Order.findOne({
+                userId: userId,
+                status: 'Delivered',
+                'orderedItems.product': productId,
+                'orderedItems.status': { $ne: 'Cancelled' }
+            });
+
+            if (!hasPurchased) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You can only review products that have been delivered to you."
+                });
+            }
+
             const newReview = await Review.create({
                 productId,
                 userId,

@@ -1,8 +1,7 @@
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
 const Coupon = require('../../models/couponSchema');
-
-
+const Wishlist = require('../../models/wishlistSchema');
 
 const getCart = async (req, res) => {
     try {
@@ -23,9 +22,13 @@ const getCart = async (req, res) => {
         if (cart && cart.items.length > 0) {
          
             const validItems = cart.items.filter(item => {
+                if (!item.productId) {
+                    itemsRemoved = true;
+                    return false;
+                }
                 const isValid = !item.productId.isBlocked && item.productId.category?.isListed;
                 
-                const sizeVariant = item.productId.sizeVariants.find(v => v.size === item.size);
+                const sizeVariant = (item.productId.sizeVariants || []).find(v => v.size === item.size);
                 const hasStock = sizeVariant && sizeVariant.quantity >= item.quantity;
                 
                 if (!hasStock) {
@@ -74,14 +77,13 @@ const getCart = async (req, res) => {
                 message: 'Error fetching cart'
             });
         }
-        res.status(500).render('error', { message: 'Error fetching cart' });
+        res.status(500).render('page-404');
     }
 };
 const addToCart = async (req, res) => {
     try {
         const { productId, size, quantity } = req.body;
         const userId = req.user._id;
-
 
         const product = await Product.findById(productId);
         if (!product) {
@@ -124,6 +126,14 @@ const addToCart = async (req, res) => {
 
         await cart.save();
 
+        try {
+            await Wishlist.findOneAndUpdate(
+                { userId },
+                { $pull: { products: { productId: productId } } }
+            );
+        } catch (wErr) {
+            console.error('Error auto-removing from wishlist:', wErr);
+        }
 
         res.status(200).json({
             success: true,
@@ -193,7 +203,6 @@ const updateCartItem = async (req, res) => {
         cartItem.quantity = quantity;
         cartItem.totalPrice = cartItem.price * quantity;
 
-   
         if (cart.appliedCoupon.couponId) {
             const coupon = await Coupon.findById(cart.appliedCoupon.couponId);
             if (coupon) {

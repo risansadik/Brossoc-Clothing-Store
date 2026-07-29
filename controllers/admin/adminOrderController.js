@@ -12,12 +12,10 @@ const getAllOrders = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5; 
         const skip = (page - 1) * limit;
-        
-      
+
         const totalOrders = await Order.countDocuments({});
         const totalPages = Math.ceil(totalOrders / limit);
-        
-       
+
         const orders = await Order.find({})
             .populate('orderedItems.product', 'productName')
             .populate('userId', 'name email phone')
@@ -25,11 +23,9 @@ const getAllOrders = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-       
         const totalReturnRequests = await ReturnOrder.countDocuments({});
         const totalReturnPages = Math.ceil(totalReturnRequests / limit);
-            
-      
+
         const returnRequests = await ReturnOrder.find({})
             .populate({
                 path: 'orderId',
@@ -39,8 +35,7 @@ const getAllOrders = async (req, res) => {
             .sort({ requestDate: -1 })
             .skip(skip)
             .limit(limit);
-            
-        
+
         const processedOrders = await Promise.all(orders.map(async (order) => {
             try {
              
@@ -99,7 +94,6 @@ const getAllOrders = async (req, res) => {
             }
         }));
 
-      
         const activeTab = req.query.tab || 'orders';
 
         res.render('admin-orders', {
@@ -129,7 +123,6 @@ const updateOrderStatus = async (req, res) => {
         const { orderId } = req.params;
         const { status } = req.body;
 
-    
         if (status === 'Return Request') {
             return res.status(StatusCode.BAD_REQUEST).json({
                 success: false,
@@ -137,7 +130,6 @@ const updateOrderStatus = async (req, res) => {
             });
         }
 
-        
         const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'];
         if (!validStatuses.includes(status)) {
             return res.status(StatusCode.BAD_REQUEST).json({
@@ -154,7 +146,6 @@ const updateOrderStatus = async (req, res) => {
             });
         }
 
-      
         if (order.isReturnProcessed && order.status === 'Returned') {
             return res.status(StatusCode.BAD_REQUEST).json({
                 success: false,
@@ -162,14 +153,12 @@ const updateOrderStatus = async (req, res) => {
             });
         }
 
-     
         if (order.status === 'Cancelled') {
             return res.status(StatusCode.BAD_REQUEST).json({
                 success: false,
                 message: 'Cannot update status of cancelled order'
             });
         }
-
 
         order.status = status;
         await order.save();
@@ -201,7 +190,6 @@ const cancelOrder = async (req, res) => {
             });
         }
 
-      
         if (['Delivered', 'Cancelled'].includes(order.status)) {
             return res.status(StatusCode.BAD_REQUEST).json({
                 success: false,
@@ -243,7 +231,6 @@ const submitReturnRequest = async (req, res) => {
         const { orderId, returnReason } = req.body;
         const userId = req.user._id;  
 
-     
         const order = await Order.findOne({ orderId: orderId });
         if (!order) {
             return res.status(StatusCode.NOT_FOUND).json({
@@ -252,7 +239,6 @@ const submitReturnRequest = async (req, res) => {
             });
         }
 
-       
         if (order.status !== 'Delivered') {
             return res.status(StatusCode.BAD_REQUEST).json({
                 success: false,
@@ -260,7 +246,6 @@ const submitReturnRequest = async (req, res) => {
             });
         }
 
-       
         const returnOrder = new ReturnOrder({
             orderId: order._id,  
             userId: userId,    
@@ -270,7 +255,6 @@ const submitReturnRequest = async (req, res) => {
 
         await returnOrder.save();
 
-       
         order.status = 'Return Request';
         await order.save();
 
@@ -307,13 +291,9 @@ const processReturnRequest = async (req, res) => {
             returnOrder.returnStatus = 'Approved';
             returnOrder.processedDate = new Date();
 
-           
             order.status = 'Returned';
             await order.save();
 
-           
-
-            
             if (order.paymentMethod === 'razorpay' && order.paymentStatus === 'completed') {
             
                 returnOrder.refundStatus = 'Processed';
@@ -323,7 +303,6 @@ const processReturnRequest = async (req, res) => {
             returnOrder.returnStatus = 'Rejected';
             returnOrder.processedDate = new Date();
 
-          
             order.status = 'Delivered';
             await order.save();
         }
@@ -401,11 +380,9 @@ const approveReturnRequest = async (req, res) => {
             });
         }
 
-        
         returnRequest.returnStatus = 'Approved';
         returnRequest.processedDate = new Date();
-        
-       
+
         const order = await Order.findById(returnRequest.orderId._id);
         if (!order) {
             throw new Error('Associated order not found');
@@ -414,10 +391,8 @@ const approveReturnRequest = async (req, res) => {
         order.status = 'Returned';
         order.isReturnProcessed = true;
 
-        
         let wallet = await Wallet.findOne({ userId: order.userId });
-        
-  
+
         if (!wallet) {
             wallet = new Wallet({
                 userId: order.userId,
@@ -426,16 +401,13 @@ const approveReturnRequest = async (req, res) => {
             });
         }
 
-
         const refundAmount = order.finalAmount;
         await wallet.addRefund(refundAmount, order._id);
 
-    
         returnRequest.refundStatus = 'Processed';
         returnRequest.refundAmount = refundAmount;
         returnRequest.refundDate = new Date();
 
-   
         await returnRequest.save();
         await order.save();
         await wallet.save();
@@ -453,7 +425,7 @@ const approveReturnRequest = async (req, res) => {
         console.error('Error approving return request:', {
             error: error.message,
             stack: error.stack,
-            returnId: returnId
+            returnId: req.params.returnId
         });
         
         return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
@@ -479,7 +451,6 @@ const rejectReturnRequest = async (req, res) => {
         returnRequest.processedDate = new Date();
         await returnRequest.save();
 
-       
         const order = returnRequest.orderId;
         order.status = 'Delivered';
         await order.save();
@@ -498,8 +469,6 @@ const rejectReturnRequest = async (req, res) => {
         });
     }
 };
-
-
 
 module.exports = {
     getAllOrders,

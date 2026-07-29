@@ -15,8 +15,6 @@ function generateOtp() {
 
 const sendVerificationEmail = async (email, otp) => {
     try {
-
-
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             port: 587,
@@ -29,7 +27,6 @@ const sendVerificationEmail = async (email, otp) => {
             debug: true
         });
 
-       
         await transporter.verify();
 
         const mailOptions = {
@@ -77,18 +74,12 @@ const forgotEmailValid = async (req, res) => {
 
         if (findUser) {
             const otp = generateOtp();
-            const emailSent = await sendVerificationEmail(email, otp);
 
-            if (emailSent) {
-                req.session.userOtp = otp;
-                req.session.email = email;
-                return res.render('forgotPass-otp');  
-            } else {
-                return res.status(500).json({
-                    success: false,
-                    message: "Failed to send OTP. Please try again"
-                });
-            }
+            await sendVerificationEmail(email, otp);
+
+            req.session.userOtp = otp;
+            req.session.email = email;
+            return res.render('forgotPass-otp');
         } else {
             return res.render('forgot-password', {
                 message: "User with this email does not exist"
@@ -118,8 +109,6 @@ const verifyForgotPassOtp = async (req, res) => {
 
     }
 }
-
-
 
 const getResetPassPage = async (req, res) => {
 
@@ -183,7 +172,6 @@ const postNewPassword = async (req, res) => {
         const passwordHash = await securePassword(newPass1);
         await User.updateOne({ email: email }, { $set: { password: passwordHash } });
 
-        
         req.session.userOtp = null;
         req.session.email = null;
 
@@ -199,8 +187,7 @@ const postNewPassword = async (req, res) => {
 };
 const loadDashboard = async (req, res) => {
     try {
-     
-        
+
        const user = req.user || await User.findOne({_id:req.session.user});
 
        if(user){
@@ -212,21 +199,17 @@ const loadDashboard = async (req, res) => {
             id:user._id,
             name:user.name,
             email:user.email,
-            phone:user.phone,
             isGoogle:isGoogle
             
         })
 
-           
         }else{
 
             res.status(404).send('User not found')
         }
-    
 
     } catch (error) {
 
-        console.log("error during loading dashboard", error);
         res.redirect('/pageNotFound')
 
     }
@@ -234,7 +217,6 @@ const loadDashboard = async (req, res) => {
 
 const getUserEditPage = async (req,res) => {
 
-   
     try {
 
         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -250,14 +232,12 @@ const getUserEditPage = async (req,res) => {
                 id:user._id,
                 user:user,
                 name:user.name,
-                phone:user.phone,
                 isGoogle:req.user.googleId
             });
         }
        
     } catch (error) {
 
-        console.log('get edit profile error : ',error);
         res.redirect('/pageNotFound');
         
     }
@@ -266,21 +246,17 @@ const getUserEditPage = async (req,res) => {
 const editUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const {name, phone, password, cPassword} = req.body;
-        
+        const {name, password, cPassword} = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({success: false, message: "User not found"});
         }
 
-       
         const updateData = {
-            name: name,
-            phone: phone
+            name: name
         };
 
-       
         if (!user.googleId && password) {
             if (password !== cPassword) {
                 return res.status(400).json({success: false, message: "Passwords don't match"});
@@ -301,7 +277,6 @@ const editUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.log('Edit user error:', error);
         return res.status(500).json({success: false, message: "Internal server error"});
     }
 };

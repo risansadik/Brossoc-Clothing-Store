@@ -26,24 +26,28 @@ const getWishlist = async (req, res) => {
 const addToWishlist = async (req, res) => {
     try {
         const userId = req.session.user;
-        const productId = req.body.productId;
+        const { productId, size, quantity } = req.body;
 
+        if (!size || !quantity) {
+            return res.status(400).json({ success: false, message: 'Size and quantity are required' });
+        }
 
         let wishlist = await Wishlist.findOne({ userId });
 
         if (!wishlist) {
             wishlist = new Wishlist({
                 userId,
-                products: [{ productId }]
+                products: [{ productId, size, quantity }]
             });
         } else {
-            // Check if product already exists
-            const productExists = wishlist.products.some(item =>
-                item.productId.toString() === productId
+            const productExists = wishlist.products.find(item => 
+                item.productId.toString() === productId && item.size === size
             );
 
-            if (!productExists) {
-                wishlist.products.push({ productId });
+            if (productExists) {
+                productExists.quantity = quantity; // Update quantity if it exists
+            } else {
+                wishlist.products.push({ productId, size, quantity });
             }
         }
 
@@ -59,10 +63,14 @@ const removeFromWishlist = async (req, res) => {
     try {
         const userId = req.session.user;
         const productId = req.params.productId;
+        const size = req.query.size; // Can pass size via query params
+
+        let pullQuery = { productId };
+        if (size) pullQuery.size = size;
 
         await Wishlist.updateOne(
             { userId },
-            { $pull: { products: { productId } } }
+            { $pull: { products: pullQuery } }
         );
 
         res.json({ success: true });

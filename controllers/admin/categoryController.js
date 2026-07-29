@@ -9,7 +9,6 @@ const categoryInfo = async (req, res) => {
         const skip = (page - 1) * limit;
         const search = req.query.search ? req.query.search.trim() : ""; 
 
-      
         const searchQuery = {
             $or: [
               
@@ -88,7 +87,6 @@ const addCategoryOffer = async (req, res) => {
         }
         res.json({ status: true });
 
-
     } catch (error) {
 
         res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
@@ -144,7 +142,6 @@ const getListCategory = async (req, res) => {
 
 const getUnlistCategory = async (req, res) => {
 
-
     try {
 
         const id = req.query.id;
@@ -179,23 +176,19 @@ const editCategory = async (req, res) => {
         const id = req.params.id;
         const { categoryName, description } = req.body;
 
-    
         if (!categoryName || !description) {
             return res.status(400).json({ error: "Name and description cannot be empty" });
         }
 
-  
         const currentCategory = await Category.findById(id);
 
         if (!currentCategory) {
             return res.status(404).json({ error: "Category not found" });
         }
 
-
         if (currentCategory.name === categoryName && currentCategory.description === description) {
             return res.status(400).json({ error: "No changes were made" });
         }
-
 
         const existingCategory = await Category.findOne({
             name: categoryName,
@@ -207,7 +200,6 @@ const editCategory = async (req, res) => {
             return res.status(400).json({ error: "Category with the same name already exists" });
         }
 
-     
         const updatedCategory = await Category.findByIdAndUpdate(
             id,
             { name: categoryName, description: description },

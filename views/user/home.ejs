@@ -1,415 +1,294 @@
+<%- include('../../views/partials/user/header.ejs') %>
+
 <style>
-    .hero {
-        background-color: #f8f5f1;
-        padding: 60px 0;
-        min-height: 600px;
-        display: flex;
-        align-items: center;
-    }
-
-
-    .hero-banner {
-        position: relative;
-        height: 480px;
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        padding: 5px;
-        width: 100%;
-        
-    }
-
-
-
-    .banner-slider {
-        position: relative;
-        height: 100%;
-        overflow: hidden;
-        border-radius: 12px;
-    }
-
-
-    .banner-track {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .banner-item {
-        flex: 0 0 100%;
-        height: 100%;
-    }
-
-    .banner-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 1.5rem;
-       
-        background: white;
-        text-decoration: none;
-        color: inherit;
-        transition: transform 0.3s ease;
-    }
-
-    .banner-content:hover {
-        transform: translateY(-5px);
-    }
-
-    .banner-image {
-        width: 100%;
-        height: 250px;
-        
-        overflow: hidden;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-       
-    }
-
-    .product-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      
-        transition: transform 0.3s ease;
-    }
-
-
-    .banner-content:hover .product-img {
-        transform: scale(1.05);
-    }
-
-    .banner-details {
-        text-align: center;
-    }
-
-    .banner-text {
-        margin-bottom: 1rem;
-    }
-
-    .banner-label {
-        display: inline-block;
-        background: #2c3e50;
-        color: white;
-        font-size: 0.8rem;
-        padding: 4px 12px;
-        border-radius: 20px;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .banner-product {
-        color: #2c3e50;
-        font-family: 'Playfair Display', serif;
-        margin: 0.5rem 0;
-        font-size: 1.5rem;
-    }
-
-    .banner-price-container {
-        margin-top: 0.5rem;
-    }
-
-    .banner-price {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.3rem;
-    }
-
-    .banner-original-price {
-        color: #666;
-        text-decoration: line-through;
-        margin-left: 0.5rem;
-    }
-
-    .shop-now-btn {
-        display: inline-block;
-        background: #2c3e50;
-        color: white;
-        border: none;
-        padding: 10px 25px;
-        border-radius: 25px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .shop-now-btn:hover {
-        background: #1a252f;
-        transform: translateY(-2px);
-    }
-
-    .banner-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: white;
-        border: none;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        z-index: 10;
-    }
-
-    .banner-nav:hover {
-        background: #2c3e50;
-        color: white;
-    }
-
-    .banner-nav.prev {
-        left: -20px;
-    }
-
-    .banner-nav.next {
-        right: -20px;
-    }
-
-    @media (max-width: 991px) {
-        .hero {
-            padding: 40px 0;
-        }
-
-        .hero-banner {
-            margin-top: 2rem;
-            height: 440px;
-        }
-
-        .banner-image {
-            height: 240px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .banner-nav {
-            width: 35px;
-            height: 35px;
-        }
-
-        .banner-nav.prev {
-            left: 10px;
-        }
-
-        .banner-nav.next {
-            right: 10px;
-        }
-    }
-
-    .container-fluid {
-        max-width: 1400px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 0 4rem;
-        /* Increased padding to match nav alignment */
-    }
-
-    .intro-excerpt {
-        margin-left: 0 !important;
-        /* Remove the fixed margin */
-        padding-right: 2rem;
-    }
-
-
-    @media (max-width: 991px) {
-        .container-fluid {
-            padding: 0 2rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .container-fluid {
-            padding: 0 1rem;
-        }
-    }
-
+    /* ── TYPOGRAPHY & LAYOUT ── */
+    .section-pad { padding: 80px 0; }
+    .text-center { text-align: center; }
+    .font-serif { font-family: 'Playfair Display', serif; } /* Fallback to elegant serif if not loaded */
     
+    /* ── HEADER OVERRIDES (HOME ONLY) ── */
+    .site-nav { background: var(--green) !important; box-shadow: none !important; position: absolute !important; width: 100%; }
+    
+    /* ── HERO EDITORIAL (WITH CAROUSEL) ── */
+    .hero-editorial { background: var(--green); color: var(--white); padding: 140px 0 60px; overflow: hidden; border-bottom: none; }
+    .he-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center; }
+    .he-content { max-width: 520px; }
+    .he-eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .he-eyebrow::after { content: ''; display: block; width: 40px; height: 1px; background: rgba(255,255,255,0.4); }
+    .he-heading { font-size: 3.5rem; font-weight: 700; line-height: 1.05; letter-spacing: -1.5px; color: #fff; margin-bottom: 24px; }
+    .he-heading em { font-style: italic; font-weight: 400; color: rgba(255,255,255,0.85); }
+    .he-sub { font-size: 1.05rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 40px; }
+    .he-actions { display: flex; gap: 16px; align-items: center; }
+    .btn-he-primary { padding: 14px 32px; background: #fff; color: var(--green); text-decoration: none; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s; border-radius: 4px; }
+    .btn-he-primary:hover { background: var(--bg); }
+    .btn-he-secondary { padding: 14px 0; color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.5); transition: border-color 0.3s; }
+    .btn-he-secondary:hover { border-color: #fff; }
+    
+    /* Carousel inside Hero */
+    .hero-carousel { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/5; background: var(--bg); box-shadow: -15px 15px 0 rgba(0,0,0,0.15); }
+    .carousel-track { display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .carousel-slide { flex: 0 0 100%; height: 100%; position: relative; }
+    .carousel-slide a { display: block; height: 100%; text-decoration: none; }
+    .carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+    .slide-info { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%); padding: 32px 24px 24px; color: #fff; }
+    .slide-info .si-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; background: var(--text); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+    .slide-info .si-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
+    .slide-info .si-price { font-size: 0.95rem; font-weight: 600; opacity: 0.9; }
+    
+    .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); font-size: 1rem; z-index: 5; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .carousel-btn:hover { background: #fff; transform: translateY(-50%) scale(1.05); }
+    .carousel-btn.prev { left: 16px; }
+    .carousel-btn.next { right: 16px; }
+    .carousel-dots { position: absolute; bottom: 24px; right: 24px; display: flex; gap: 6px; z-index: 5; }
+    .c-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); border: none; cursor: pointer; padding: 0; transition: all 0.3s; }
+    .c-dot.active { background: #fff; width: 24px; border-radius: 3px; }
+
+    /* ── PHILOSOPHY ── */
+    .philosophy-section { background: var(--text); color: var(--white); text-align: center; border-bottom: 4px solid var(--green); }
+    .phil-inner { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+    .phil-icon { font-size: 2rem; color: var(--green); margin-bottom: 24px; }
+    .phil-text { font-size: 1.8rem; font-weight: 300; line-height: 1.5; margin-bottom: 32px; font-style: italic; }
+    .phil-author { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: rgba(255,255,255,0.7); }
+
+    /* ── WARDROBE ESSENTIALS ── */
+    .essentials-section { background: var(--white); border-bottom: 1px solid var(--border); }
+    .ess-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-top: 48px; }
+    .ess-card { background: var(--white); position: relative; group; overflow: hidden; }
+    .ess-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; filter: grayscale(20%); transition: filter 0.5s, transform 0.5s; }
+    .ess-card:hover .ess-img { filter: grayscale(0%); transform: scale(1.03); }
+    .ess-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px 24px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: #fff; }
+    .ess-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .ess-link { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .ess-card:hover .ess-link { color: var(--green); }
+
+    /* ── CURATED COLLECTION ── */
+    .products-section { background: var(--bg); }
+    .prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 48px; }
+    .view-all-row { text-align: center; margin-top: 48px; }
+    .btn-view-all { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border: 1px solid var(--text); color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; }
+    .btn-view-all:hover { background: var(--text); color: #fff; }
+
+    /* ── THE BROSSOC SOCIETY (VIP) ── */
+    .vip-section { background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .vip-inner { max-width: 800px; margin: 0 auto; padding: 0 24px; text-align: center; }
+    .vip-icon { font-size: 2.5rem; color: var(--text); margin-bottom: 24px; }
+    .vip-title { font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+    .vip-sub { font-size: 1rem; color: var(--muted); line-height: 1.6; margin-bottom: 32px; }
+    .vip-form { display: flex; max-width: 500px; margin: 0 auto; border: 1px solid var(--text); }
+    .vip-form input { flex: 1; padding: 16px 20px; border: none; background: transparent; font-family: inherit; font-size: 0.95rem; outline: none; }
+    .vip-form button { padding: 0 24px; background: var(--text); color: #fff; border: none; font-family: inherit; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: background 0.2s; }
+    .vip-form button:hover { background: var(--green); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) { 
+        .he-inner { grid-template-columns: 1fr; gap: 40px; } 
+        .ess-grid { grid-template-columns: 1fr; }
+        .prod-grid { grid-template-columns: repeat(2, 1fr); } 
+    }
+    @media (max-width: 600px) { 
+        .he-heading { font-size: 2.5rem; } 
+        .phil-text { font-size: 1.4rem; } 
+        .vip-title { font-size: 2rem; }
+        .prod-grid { grid-template-columns: 1fr; } 
+        .vip-form { flex-direction: column; border: none; gap: 12px; }
+        .vip-form input { border: 1px solid var(--border); }
+        .vip-form button { padding: 16px; }
+    }
 </style>
 
-<%-include('../../views/partials/user/header.ejs')%>
-
-    <!-- Start Hero Section -->
-    <div class="hero">
-        <div class="container-fluid px-4">
-            <div class="row align-items-center">
-                <div class="col-lg-6 pe-lg-5">
-                    <div class="intro-excerpt" style="margin-left: 20%;">
-                        <h1>Timeless Elegance</h1>
-                        <p class="mb-4">Discover the quintessential charm of old money fashion. Curated vintage-inspired
-                            outfits that exude sophistication, refinement, and understated luxury.</p>
-                        <p>
-                            <a href="/shop" class="btn btn-dark me-2">Explore Collection</a>
-                            <a href="#products" class="btn btn-outline-dark">View Pieces</a>
-                        </p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="hero-banner">
-                        <div class="banner-slider">
-                            <div class="banner-track" id="bannerTrack">
-                                <% products.forEach((product, index)=> { %>
-                                    <div class="banner-item">
-                                        <a href="/productDetails?id=<%=product._id%>" class="banner-content">
-                                            <div class="banner-image">
-                                                <% if (product.productImage && product.productImage.length> 0) { %>
-                                                    <img src="/uploads/product-images/<%=product.productImage[0]%>"
-                                                        alt="<%=product.productName%>" class="product-img">
-                                                    <% } else { %>
-                                                        <img src="/images/placeholder-vintage.jpg"
-                                                            alt="No image available" class="product-img">
-                                                        <% } %>
-                                            </div>
-                                            <div class="banner-details">
-                                                <div class="banner-text">
-                                                    <span class="banner-label">New Arrival</span>
-                                                    <h3 class="banner-product">
-                                                        <%=product.productName%>
-                                                    </h3>
-                                                    <div class="banner-price-container">
-                                                        <span class="banner-price">₹<%=product.salePrice%></span>
-                                                        <% if (product.regularPrice> product.salePrice) { %>
-                                                            <span class="banner-original-price">₹
-                                                                <%=product.regularPrice%>
-                                                            </span>
-                                                            <% } %>
-                                                    </div>
-                                                </div>
-                                                <button class="shop-now-btn">Shop Now</button>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <% }); %>
-                            </div>
+<!-- Hero Editorial -->
+<section class="hero-editorial">
+    <div class="he-inner">
+        <div class="he-content">
+            <div class="he-eyebrow">Autumn / Winter 2026</div>
+            <h1 class="he-heading">The Art of<br><em>Sartorial</em> Excellence</h1>
+            <p class="he-sub">Brossoc redefines classic menswear for the modern gentleman. We meticulously curate heritage tailoring, premium cashmeres, and timeless silhouettes that endure beyond fleeting trends.</p>
+            <div class="he-actions">
+                <a href="/shop" class="btn-he-primary">Explore Collection</a>
+                <a href="/about" class="btn-he-secondary">Our Heritage</a>
+            </div>
+        </div>
+        <div class="hero-carousel" id="heroCarousel">
+            <% 
+               let carouselProducts = [...(products || [])];
+               const trenchIndex = carouselProducts.findIndex(p => p.productName.toLowerCase().includes('trench coat'));
+               if (trenchIndex > -1) {
+                   const trench = carouselProducts.splice(trenchIndex, 1)[0];
+                   carouselProducts.unshift(trench);
+               }
+               carouselProducts = carouselProducts.slice(0, 5);
+            %>
+            <div class="carousel-track" id="carouselTrack">
+                <% carouselProducts.forEach((product, index) => { %>
+                <div class="carousel-slide">
+                    <a href="/productDetails?id=<%= product._id %>">
+                        <% if (product.productImage && product.productImage.length > 0) { %>
+                        <img src="<%= (product.productImage[0] && product.productImage[0].startsWith('http')) ? product.productImage[0] : '/uploads/product-images/' + product.productImage[0] %>"
+                            alt="<%= product.productName %>" loading="<%= index === 0 ? 'eager' : 'lazy' %>">
+                        <% } else { %>
+                        <img src="/images/placeholder.jpg" alt="<%= product.productName %>">
+                        <% } %>
+                        <div class="slide-info">
+                            <span class="si-tag">Featured</span>
+                            <div class="si-name"><%= product.productName %></div>
+                            <div class="si-price">₹<%= product.salePrice %></div>
                         </div>
-                        <button class="banner-nav prev" onclick="moveSlide(-1)" type="button">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                        </button>
-                        <button class="banner-nav next" onclick="moveSlide(1)" type="button">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-                    </div>
+                    </a>
                 </div>
+                <% }); %>
+            </div>
+            <button class="carousel-btn prev" onclick="moveSlide(-1)" type="button"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="carousel-btn next" onclick="moveSlide(1)" type="button"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="carousel-dots" id="carouselDots">
+                <% carouselProducts.forEach((_, i) => { %><button class="c-dot <%= i===0?'active':'' %>" onclick="goToSlide(<%= i %>)"></button><% }); %>
             </div>
         </div>
     </div>
-    <!-- End Hero Section -->
+</section>
 
-    <!-- Start Product Section -->
-    <div class="product-section" id="products">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2>Curated Vintage Ensembles</h2>
-                    <p>Timeless pieces that tell a story of classic sophistication</p>
+<!-- Brand Philosophy -->
+<section class="philosophy-section section-pad">
+    <div class="phil-inner">
+        <i class="fa-solid fa-quote-right phil-icon"></i>
+        <p class="phil-text">"True elegance is not about being noticed, it's about being remembered. We build wardrobes that serve as a testament to craftsmanship, structure, and quiet confidence."</p>
+        <div class="phil-author">The Brossoc Standard</div>
+    </div>
+</section>
+
+<!-- Wardrobe Essentials (Categories) -->
+<section class="essentials-section section-pad">
+    <div class="site-container">
+        <div class="text-center">
+            <h2 class="section-title">Wardrobe Essentials</h2>
+            <p class="section-sub">The foundational pillars of a gentleman's closet</p>
+        </div>
+        <% 
+            const getCatId = (name) => {
+                if (!categories) return '';
+                const cat = categories.find(c => c.name.toLowerCase().includes(name.toLowerCase()));
+                return cat ? '?category=' + cat._id : '';
+            };
+        %>
+        <div class="ess-grid">
+            <a href="/shop<%= getCatId('suit') %>" class="ess-card">
+                <% const suitProd = products.find(p => p.category && p.category.name.toLowerCase().includes('suit')); %>
+                <% if (suitProd && suitProd.productImage && suitProd.productImage.length > 0) { %>
+                    <img src="<%= (suitProd.productImage[0].startsWith('http')) ? suitProd.productImage[0] : '/uploads/product-images/' + suitProd.productImage[0] %>" alt="Tailoring" class="ess-img">
+                <% } else { %>
+                    <img src="/images/placeholder.jpg" alt="Tailoring" class="ess-img">
+                <% } %>
+                <div class="ess-content">
+                    <div class="ess-title">Heritage Tailoring</div>
+                    <div class="ess-link">Explore Suits <i class="fa-solid fa-arrow-right"></i></div>
                 </div>
-
-                <% if (products && products.length> 0) { %>
-                    <% products.forEach(product=> { %>
-                        <div class="col-12 col-md-4 mb-4">
-                            <a class="product-item" href="/productDetails?id=<%=product._id%>">
-                                <% if (product.productImage && product.productImage.length> 0) { %>
-                                    <img src="/uploads/product-images/<%=product.productImage[0]%>"
-                                        alt="<%=product.productName%>" class="img-fluid product-thumbnail rounded">
-                                    <% } else { %>
-                                        <img src="/images/placeholder-vintage.jpg" alt="No image available"
-                                            class="img-fluid product-thumbnail rounded">
-                                        <% } %>
-                                            <h3 class="product-title text-dark">
-                                                <%=product.productName%>
-                                            </h3>
-                                            <div class="product-price-wrap">
-                                                <strong class="product-price text-success">₹<%=product.salePrice%>
-                                                </strong>
-                                                <span class="original-price text-muted"
-                                                    style="text-decoration: line-through;">
-                                                    ₹<%=product.regularPrice%>
-                                                </span>
-                                                <p class="product-description text-secondary mt-2">
-                                                    <%=product.description%>
-                                                </p>
-                                            </div>
-
-                            </a>
-                        </div>
-                        <% }); %>
-                            <% } else { %>
-                                <div class="col-12 text-center">
-                                    <p>Our vintage collection is being refreshed. Check back soon!</p>
-                                </div>
-                                <% } %>
-            </div>
-
-            <div class="row mt-5">
-                <div class="col-12 text-center">
-                    <a href="/shop" class="btn btn-dark btn-lg">Full Vintage Collection</a>
+            </a>
+            <a href="/shop<%= getCatId('knitwear') || getCatId('sweater') || getCatId('shirt') %>" class="ess-card">
+                <% const knitProd = products.find(p => p.category && p.category.name.toLowerCase().includes('knitwear')); %>
+                <% if (knitProd && knitProd.productImage && knitProd.productImage.length > 0) { %>
+                    <img src="<%= (knitProd.productImage[0].startsWith('http')) ? knitProd.productImage[0] : '/uploads/product-images/' + knitProd.productImage[0] %>" alt="Knitwear" class="ess-img">
+                <% } else { %>
+                    <img src="/images/placeholder.jpg" alt="Knitwear" class="ess-img">
+                <% } %>
+                <div class="ess-content">
+                    <div class="ess-title">Premium Knitwear</div>
+                    <div class="ess-link">Explore Sweaters <i class="fa-solid fa-arrow-right"></i></div>
                 </div>
-            </div>
+            </a>
+            <a href="/shop<%= getCatId('outerwear') || getCatId('coat') || getCatId('jacket') %>" class="ess-card">
+                <% const outProd = products.find(p => p.category && p.category.name.toLowerCase().includes('outerwear')); %>
+                <% if (outProd && outProd.productImage && outProd.productImage.length > 0) { %>
+                    <img src="<%= (outProd.productImage[0].startsWith('http')) ? outProd.productImage[0] : '/uploads/product-images/' + outProd.productImage[0] %>" alt="Outerwear" class="ess-img">
+                <% } else { %>
+                    <img src="/images/placeholder.jpg" alt="Outerwear" class="ess-img">
+                <% } %>
+                <div class="ess-content">
+                    <div class="ess-title">Classic Outerwear</div>
+                    <div class="ess-link">Explore Coats <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
         </div>
     </div>
-    <!-- End Product Section -->
+</section>
 
+<!-- Curated Collection (Products) -->
+<section class="products-section section-pad" id="products">
+    <div class="site-container">
+        <div class="text-center">
+            <h2 class="section-title">The Curator's Selection</h2>
+            <p class="section-sub">Recent additions to our archives</p>
+        </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const track = document.getElementById('bannerTrack');
-            const items = track.children;
-            let currentIndex = 0;
-            let isTransitioning = false;
+        <% if (products && products.length > 0) { %>
+        <div class="prod-grid">
+            <% products.forEach(product => { %>
+            <a class="prod-card" href="/productDetails?id=<%= product._id %>">
+                <div class="img-wrap">
+                    <% if (product.productImage && product.productImage.length > 0) { %>
+                    <img src="<%= (product.productImage[0] && product.productImage[0].startsWith('http')) ? product.productImage[0] : '/uploads/product-images/' + product.productImage[0] %>"
+                        alt="<%= product.productName %>" loading="lazy">
+                    <% } else { %>
+                    <img src="/images/placeholder.jpg" alt="<%= product.productName %>">
+                    <% } %>
+                    <% if (product.regularPrice > product.salePrice) { %>
+                    <span class="prod-badge">Sale</span>
+                    <% } %>
+                </div>
+                <div class="prod-info">
+                    <div class="prod-name"><%= product.productName %></div>
+                    <div class="prod-prices">
+                        <span class="sale-price">₹<%= product.salePrice %></span>
+                        <% if (product.regularPrice > product.salePrice) { %>
+                        <span class="orig-price">₹<%= product.regularPrice %></span>
+                        <% } %>
+                    </div>
+                </div>
+            </a>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <p style="text-align:center;color:var(--muted);padding:40px 0;">Collection being refreshed. Check back soon!</p>
+        <% } %>
 
-            // Initial setup
-            track.style.transform = 'translateX(0)';
+        <div class="view-all-row">
+            <a href="/shop" class="btn-view-all">View Full Collection</a>
+        </div>
+    </div>
+</section>
 
-            window.moveSlide = function (direction) {
-                if (isTransitioning) return;
+<!-- The Brossoc Society -->
+<section class="vip-section section-pad">
+    <div class="vip-inner">
+        <i class="fa-solid fa-envelope-open-text vip-icon"></i>
+        <h2 class="vip-title">Join The Brossoc Society</h2>
+        <p class="vip-sub">Subscribe to receive exclusive access to private sales, early product releases, and our quarterly sartorial guide on mastering classic menswear.</p>
+        <form class="vip-form" onsubmit="event.preventDefault(); Swal.fire({icon: 'success', title: 'Welcome to the Society', text: 'You have been successfully subscribed.'})">
+            <input type="email" placeholder="Enter your email address" required>
+            <button type="submit">Subscribe</button>
+        </form>
+    </div>
+</section>
 
-                isTransitioning = true;
-                currentIndex = (currentIndex + direction + items.length) % items.length;
-                updateSlide();
+<%- include('../../views/partials/user/footer.ejs') %>
 
-                setTimeout(() => {
-                    isTransitioning = false;
-                }, 500);
-            }
+<script>
+    let currentIdx = 0;
+    const track = document.getElementById('carouselTrack');
+    const dots = document.querySelectorAll('.c-dot');
+    let autoPlay = setInterval(() => moveSlide(1), 5000);
 
-            function updateSlide() {
-                track.style.transform = `translateX(-${currentIndex * 100}%)`;
-            }
-
-            // Auto rotation
-            let autoRotate = setInterval(() => moveSlide(1), 3000);
-
-            // Pause on hover
-            track.addEventListener('mouseenter', () => {
-                clearInterval(autoRotate);
-            });
-
-            track.addEventListener('mouseleave', () => {
-                autoRotate = setInterval(() => moveSlide(1), 3000);
-            });
-
-            // Prevent multiple rapid clicks
-            document.querySelectorAll('.banner-nav').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault(); // Prevent any default behavior
-                    if (!isTransitioning) {
-                        const direction = this.classList.contains('prev') ? -1 : 1;
-                        moveSlide(direction);
-                    }
-                });
-            });
-        });
-    </script>
-    <%-include('../../views/partials/user/footer.ejs')%>
+    function moveSlide(dir) {
+        const count = track ? track.children.length : 0;
+        if (!count) return;
+        currentIdx = (currentIdx + dir + count) % count;
+        updateCarousel();
+    }
+    function goToSlide(i) { currentIdx = i; updateCarousel(); }
+    function updateCarousel() {
+        if (track) track.style.transform = `translateX(-${currentIdx * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === currentIdx));
+    }
+    if (track) {
+        track.addEventListener('mouseenter', () => clearInterval(autoPlay));
+        track.addEventListener('mouseleave', () => { autoPlay = setInterval(() => moveSlide(1), 5000); });
+    }
+</script>

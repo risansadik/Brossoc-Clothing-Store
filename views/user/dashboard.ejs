@@ -1,38 +1,43 @@
-<%-include('../../views/partials/user/profilePartials/header.ejs')%>
-        <main class="content">
-            <div class="profile-card">
-                <h2 class="profile-header"><%=name%></h2>
+<%- include('../../views/partials/user/profilePartials/header.ejs') %>
+<% if(false) { %><!-- VSCode Linter Trick --><html><body><div class="profile-layout"><main class="profile-main"><% } %>
 
-                <%if(locals.isGoogle){%>
-                <div class="profile-info">
-                    <div class="info-item">
-                        <span class="info-label">User name</span>
-                        <span class="info-value"><%=name%></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Email</span>
-                        <span class="info-value"><%=email%></span>
-                        <%}else{%>
-                        
-                <div class="profile-info">
-                    <div class="info-item">
-                        <span class="info-label">User name</span>
-                        <span class="info-value"><%=name%></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Email</span>
-                        <span class="info-value"><%=email%></span>
-                        
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Mobile Number</span>
-                        <span class="info-value"><%=phone%></span>
-                        <%}%>
-                       
-                    </div>
-                    <a href="/edit-userProfile" style="text-decoration: none; color: white;"> <button class="edit-btn">Edit</button></a>
-                </div>
-            </div>
+<style>
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .info-row { display: flex; flex-direction: column; gap: 4px; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+    .info-row .label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+    .info-row .value { font-size: 0.95rem; font-weight: 500; color: var(--text); }
+    .profile-avatar-ring { width: 72px; height: 72px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.6rem; margin-bottom: 16px; }
+    .btn-edit { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--green); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+    .btn-edit:hover { background: #3a411d; }
+    @media (max-width: 480px) { .profile-grid { grid-template-columns: 1fr; } }
+</style>
+
+<h2 class="page-title">My Profile</h2>
+
+<div class="card">
+    <div class="profile-avatar-ring"><i class="fa-solid fa-user"></i></div>
+
+    <% if (locals.isGoogle) { %>
+    <div class="profile-grid">
+        <div class="info-row full"><span class="label">Name</span><span class="value"><%= name %></span></div>
+        <div class="info-row full" style="grid-column:1/-1"><span class="label">Email</span><span class="value"><%= email %></span></div>
+    </div>
+    <% } else { %>
+    <div class="profile-grid">
+        <div class="info-row" style="grid-column:1/-1"><span class="label">Name</span><span class="value"><%= name %></span></div>
+        <div class="info-row" style="grid-column:1/-1"><span class="label">Email</span><span class="value"><%= email %></span></div>
+    </div>
+    <% } %>
+
+    <a href="/edit-userProfile" class="btn-edit"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+</div>
+
+<script>
+    // Sidebar toggle
+    );
+    }
+</script>
+
         </main>
     </div>
 </body>

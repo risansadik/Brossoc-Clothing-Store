@@ -1,637 +1,273 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories — Brossoc Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin-assets/css/admin.css?v=4">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    if (typeof Swal !== 'undefined') {
+      const originalSwalFire = Swal.fire;
+      Swal.fire = function() {
+        let opts = typeof arguments[0] === 'string' ? { title: arguments[0], text: arguments[1], icon: arguments[2] } : { ...arguments[0] };
+        const requiresResponse = opts.showCancelButton || opts.showDenyButton || opts.input || (opts.allowOutsideClick === false && !opts.timer);
+        if (!requiresResponse && opts.toast === undefined && !opts.timerProgressBar) {
+          opts.toast = true; opts.position = 'top-end'; opts.showConfirmButton = false; opts.timer = opts.timer || 2500; opts.timerProgressBar = true;
+          opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+        } else if (!opts.toast) {
+          opts.customClass = { ...opts.customClass, popup: 'boxy-modal', confirmButton: 'btn-primary', cancelButton: 'btn-secondary' };
+          opts.buttonsStyling = false;
+        } else {
+          opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
         }
+        return originalSwalFire.call(Swal, opts);
+      };
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+    
+    :root {
+      --bg-primary: #f4f5f3;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-hover: #f1f3f5;
+      --accent: #111111;
+      --text-primary: #1a1a1a;
+      --text-secondary: #4b5563;
+      --text-muted: #6b7280;
+      --border: #d1d5db;
+      --border-light: #e5e7eb;
+      --radius: 0px;
+    }
 
-        body {
-            display: flex;
-            min-height: 100vh;
-            background-color: #1a1d21;
-            color: #fff;
-        }
+    body { background-color: var(--bg-primary); }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; letter-spacing: 0.5px; }
+    .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 0.5px; }
+    
+    /* Boxy Modal CSS */
+    .swal2-popup.boxy-modal { border-radius: 0 !important; border: 1px solid var(--border) !important; padding: 20px !important; width: auto !important; max-width: 380px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; }
+    .swal2-icon { transform: scale(0.65) !important; margin: 10px auto 10px auto !important; border: none !important; }
+    .swal2-success { border-color: var(--text-primary) !important; color: var(--text-primary) !important; }
+    .swal2-success [class^="swal2-success-line"] { background-color: var(--text-primary) !important; }
+    .swal2-success .swal2-success-ring { display: none !important; }
+    .swal2-error { border-color: transparent !important; color: var(--text-primary) !important; }
+    .swal2-error [class^="swal2-x-mark-line"] { background-color: var(--text-primary) !important; }
+    .swal2-warning { border-color: transparent !important; color: var(--text-primary) !important; }
+    .swal2-info { border-color: transparent !important; color: var(--text-primary) !important; }
+    .swal2-title { font-family: 'Inter', sans-serif !important; font-size: 1.1rem !important; color: var(--text-primary) !important; font-weight: 700 !important; margin-bottom: 8px !important; padding: 0 !important; }
+    .swal2-html-container { font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; color: var(--text-muted) !important; margin: 0 0 16px 0 !important; padding: 0 !important; }
+    .swal2-actions { margin-top: 0 !important; gap: 8px !important; }
+    .swal2-confirm.btn-primary { background: var(--text-primary) !important; color: #fff !important; border-radius: 0 !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: none !important; }
+    .swal2-cancel.btn-secondary { background: var(--bg-primary) !important; color: var(--text-primary) !important; border-radius: 0 !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: 1px solid var(--border) !important; }
+    
+    .swal2-input { border-radius: 0 !important; border: none !important; border-bottom: 1px solid var(--border) !important; box-shadow: none !important; font-family: 'Inter', sans-serif !important; font-size: 0.95rem !important; padding: 8px 0 !important; margin: 1em 0 !important; width: 100% !important; max-width: 100% !important; background: transparent !important; transition: border-color 0.3s !important; }
+    .swal2-input:focus { outline: none !important; border-bottom: 1px solid #111111 !important; box-shadow: none !important; }
+    .swal2-validation-message { background: transparent !important; color: #dc2626 !important; font-family: 'Inter', sans-serif !important; font-size: 0.8rem !important; font-weight: 600 !important; padding: 0 !important; margin-top: 8px !important; justify-content: flex-start !important; }
+    .swal2-validation-message::before { display: none !important; }
 
-        .sidebar {
-            width: 250px;
-            background-color: #22262a;
-            padding: 20px;
-            position: fixed;
-            height: 100vh;
-        }
+    .swal2-popup.boxy-toast { border-radius: 0 !important; padding: 12px 16px !important; border: 1px solid var(--border) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; font-family: 'Inter', sans-serif !important; width: auto !important; }
+    .swal2-toast .swal2-title { font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+    
+    .card { background: var(--bg-card); border: 1px solid #111111; border-radius: 0; box-shadow: none; }
+    .table-wrapper { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+    .admin-table { width: 100%; min-width: 900px; }
+    .admin-table th { background: var(--bg-primary); border-bottom: 1px solid #111111; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .admin-table td { border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+    
+    .badge { border-radius: 0; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.65rem; padding: 4px 8px; border: none; }
+    .badge-success { background: #4a5225; color: #fff; }
+    .badge-warning { background: #f59e0b; color: #fff; }
+    .badge-danger { background: #111111; color: #fff; }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            color: #a0a0a0;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-item:hover {
-            color: #fff;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            flex-grow: 1;
-            padding: 20px;
-        }
-
-        .content-header {
-            margin-bottom: 30px;
-        }
-
-        .content-header h2 {
-            font-size: 24px;
-            color: #fff;
-        }
-
-        .search-container {
-            margin-bottom: 30px;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-            background: #22262a;
-            border: 1px solid #2d3238;
-            border-radius: 30px;
-            padding: 5px 20px;
-        }
-
-        .search-box input {
-            flex: 1;
-            border: none;
-            padding: 10px;
-            outline: none;
-            font-size: 14px;
-            background: transparent;
-            color: #fff;
-        }
-
-        .search-box button {
-            padding: 8px 20px;
-            background: #0095ff;
-            border: none;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .category-container {
-            display: flex;
-            gap: 30px;
-        }
-
-        .category-form {
-            flex: 0 0 300px;
-            background: #22262a;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #2d3238;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #a0a0a0;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px 12px;
-            background: #2d3238;
-            border: 1px solid #363b42;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #fff;
-        }
-
-        .form-group textarea {
-            height: 100px;
-            resize: vertical;
-        }
-
-        .btn-create {
-            width: 100%;
-            padding: 12px;
-            background-color: #0095ff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .category-table {
-            flex: 1;
-            background: #22262a;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #2d3238;
-        }
-
-        .category-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .category-table th,
-        .category-table td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #2d3238;
-            color: #a0a0a0;
-        }
-
-        .category-table th {
-            font-weight: 500;
-        }
-
-        .badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge.alert-success {
-            background-color: #198754;
-            color: white;
-        }
-
-        .badge.alert-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn {
-            padding: 6px 12px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-        }
-
-        .btn-info {
-            background-color: #0095ff;
-            color: white;
-        }
-
-        .btn-success {
-            background-color: #198754;
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .pagination-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .pagination {
-            display: inline-block;
-        }
-
-        .pagination a,
-        .pagination .current-page {
-            display: inline-block;
-            padding: 8px 16px;
-            margin: 0 4px;
-            background-color: #22262a;
-            border: 1px solid #2d3238;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .pagination a:hover {
-            background-color: #2d3238;
-        }
-
-        ::placeholder {
-            color: #6c757d;
-        }
-
-        ::-webkit-scrollbar {
-
-            display: none;
-        }
-
-        .text-center {
-            text-align: center !important;
-        }
-
-        .text-start {
-            text-align: left !important;
-        }
-    </style>
+    .search-bar { position: relative; border: none !important; border-bottom: 1px solid #111111 !important; border-radius: 0 !important; display: flex; align-items: center; width: 280px; }
+    .search-bar input { width: 100%; border: none !important; background: transparent !important; padding: 10px 0 10px 32px !important; font-family: inherit; font-size: 0.9rem; color: var(--text-primary); outline: none !important; box-shadow: none !important; border-radius: 0 !important; margin: 0 !important; }
+    .search-bar .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    
+    .btn { border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
+    .form-control { width: 100%; padding: 8px 0 !important; border: none !important; border-bottom: 1px solid var(--border) !important; border-radius: 0 !important; background: transparent !important; color: var(--text-primary) !important; font-family: inherit; font-size: 0.95rem !important; transition: border-color 0.3s !important; box-shadow: none !important; }
+    .form-control:focus { outline: none !important; border-bottom: 1px solid #111111 !important; box-shadow: none !important; }
+    .form-label { display: block; font-size: 0.7rem !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted) !important; margin-bottom: 4px !important; }
+    .form-section { background: var(--bg-card); border: 1px solid #111111; border-radius: 0; padding: 24px; margin-bottom: 24px; }
+    .form-section-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+  
+    @media (max-width: 768px) {
+      .admin-main { margin-left: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; }
+      .admin-topbar { flex-direction: column; align-items: flex-start; height: auto; padding: 16px; gap: 16px; }
+      .topbar-actions { width: 100%; display: flex; gap: 8px; justify-content: stretch; }
+      .topbar-actions .btn { flex: 1; text-align: center; justify-content: center; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .page-header form { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+      .search-bar { width: 100% !important; flex: 1; min-width: 150px; }
+    }
+</style>
 </head>
-
 <body>
-    <aside class="sidebar">
+<% locals.activePage = 'category'; %>
+<%- include('../../views/partials/admin/sidebar.ejs') %>
 
-        <nav>
-            <a href="/admin/sales-report" class="nav-item">Dashboard</a>
-            <a href="/admin/users" class="nav-item">Customers</a>
-            <a href="/admin/category" class="nav-item">Category</a>
-            <a href="/admin/addProducts" class="nav-item">Add product</a>
-            <a href="/admin/products" class="nav-item">Products</a>
-            <a href="/admin/coupons" class="nav-item">Coupon</a>
-            <a href="#" class="nav-item">Banner</a>
-            <a href="/admin/orders" class="nav-item">Orders</a>
-            <a href="/admin/logout" class="nav-item">Logout</a>
-        </nav>
-    </aside>
+<main class="admin-main">
+  <header class="admin-topbar">
+    <div class="flex-center gap-3">
+      <button class="btn btn-ghost btn-icon hamburger" onclick="toggleSidebar()" style="padding:4px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="topbar-title">Categories</div>
+    </div>
+    <div class="topbar-actions">
+    </div>
+  </header>
 
-    <main class="main-content">
-        <div class="content-header">
-            <h2>Category</h2>
+  <div class="admin-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Category Management</h1>
+        <p class="page-subtitle">Manage product categories and offers</p>
+      </div>
+      <form action="/admin/category/" method="get" class="flex-center gap-2">
+        <div class="search-bar">
+          <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+          <input type="text" name="search" placeholder="Search categories…"
+                 value="<%= typeof search !== 'undefined' ? search : '' %>">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+      </form>
+    </div>
+
+    <div class="grid-2" style="gap:24px; align-items:start;">
+      <!-- Add Category Form -->
+      <div class="form-section" style="position:sticky;top:80px;">
+        <div class="form-section-title">ADD NEW CATEGORY</div>
+        <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Category Name <span class="req">*</span></label>
+            <input type="text" name="name" id="product_name" class="form-control" placeholder="e.g. T-Shirts">
+            <div id="name-error" class="invalid-feedback"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description <span class="req">*</span></label>
+            <textarea name="description" id="descriptionId" class="form-control" rows="3" placeholder="Brief description…"></textarea>
+            <div id="description-error" class="invalid-feedback"></div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+            CREATE CATEGORY
+          </button>
+        </form>
+      </div>
+
+      <!-- Categories Table -->
+      <div style="min-width: 0;">
+        <div class="card" style="padding:0;">
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Offer</th>
+                  <th>Status</th>
+                  <th>Visibility</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% [...cat].reverse().forEach(category => { %>
+                  <tr>
+                    <td class="fw-600"><%= category.name %></td>
+                    <td style="color:var(--text-secondary);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><%= category.description %></td>
+                    <td>
+                      <% if (category.categoryOffer > 0) { %>
+                        <div class="flex-center gap-2">
+                          <span class="badge badge-warning"><%= category.categoryOffer %>% OFF</span>
+                          <button class="btn btn-ghost btn-sm" onclick="removeOffer('<%= category._id %>')">✕</button>
+                        </div>
+                      <% } else { %>
+                        <button class="btn btn-outline btn-sm" onclick="addOffer('<%= category._id %>')">ADD OFFER</button>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (category.isListed) { %>
+                        <span class="badge badge-success">Listed</span>
+                      <% } else { %>
+                        <span class="badge badge-danger">Unlisted</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (category.isListed) { %>
+                        <a href="/admin/listCategory?id=<%= category._id %>" class="btn btn-outline btn-sm">UNLIST</a>
+                      <% } else { %>
+                        <a href="/admin/unlistCategory?id=<%= category._id %>" class="btn btn-primary btn-sm">LIST</a>
+                      <% } %>
+                    </td>
+                    <td>
+                      <a href="/admin/editCategory?id=<%= category._id %>" class="btn btn-outline btn-sm">EDIT</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="search-container">
-            <form action="/admin/category/" method="get">
-                <div class="search-box">
-                    <input type="text" placeholder="Search categories" name="search">
-                    <button type="submit">Search</button>
-                </div>
-            </form>
-        </div>
+        <% if (totalPages > 1) { %>
+          <div class="pagination">
+            <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage-1 %>&search=<%= typeof search !== 'undefined' ? search : '' %>" class="page-link">‹</a>
+            <% } %>
+            <% for(let i = 1; i <= totalPages; i++) { %>
+              <a href="?page=<%= i %>&search=<%= typeof search !== 'undefined' ? search : '' %>" class="page-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+              <a href="?page=<%= currentPage+1 %>&search=<%= typeof search !== 'undefined' ? search : '' %>" class="page-link">›</a>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</main>
 
-        <div class="category-container">
-            <div class="category-form">
-                <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" name="name" placeholder="Type here" id="product_name">
-                        <div id="name-error" class="error-message"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea placeholder="Type here" name="description" id="descriptionId"></textarea>
-                        <div id="description-error" class="error-message"></div>
-                    </div>
-                    <button type="submit" class="btn-create">Create category</button>
-                </form>
-            </div>
+<script>
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    document.querySelectorAll('.invalid-feedback').forEach(el => { el.textContent = ''; el.style.display='none'; });
+    const name = document.getElementsByName('name')[0].value.trim();
+    const description = document.getElementById('descriptionId').value.trim();
+    let ok = true;
+    if (!name) { showErr('name-error', 'Please enter a category name.'); ok = false; }
+    else if (!/^[a-zA-Z\s]+$/.test(name)) { showErr('name-error', 'Name should contain only letters.'); ok = false; }
+    if (!description) { showErr('description-error', 'Please enter a description.'); ok = false; }
+    if (!ok) return;
 
-            <div class="category-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Offer Price</th>
-                            <th>Offer</th>
-                            <th>Status</th>
-                            <th>List/Unlist</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%cat.reverse().forEach((category,index)=>{%>
-                            <tr>
-                                <td></td>
-                                <td class="text-start">
-                                    <%=category.name%>
-                                </td>
-                                <td class="text-start">
-                                    <%=category.description%>
-                                </td>
-                                <td class="text-center">
-                                    <%if(category.categoryOffer){%>
-                                        <%=category.categoryOffer%>
-                                            <%}else{%>
-                                                0%
-                                                <%}%>
-                                </td>
-                                <td class="text-start">
-                                    <%if(category.categoryOffer===0){%>
-                                        <button class="btn btn-info">
-                                            <a href="#" class="text-white" onclick="addOffer('<%=category._id%>')"
-                                                style="text-decoration: none;">Add
-                                                Offer</a>
-                                        </button>
-                                        <%}else{%>
-                                            <button class="btn btn-info">
-                                                <a href="#" class="text-white"
-                                                    onclick="removeOffer('<%=category._id%>')"
-                                                    style="text-decoration: none;">Remove</a>
-                                            </button>
-                                            <%}%>
-                                </td>
-                                <td>
-                                    <%if(category.isListed){%>
-                                        <span class="badge alert-success">Listed</span>
-                                        <%}else{%>
-                                            <span class="badge alert-danger">Unlisted</span>
-                                            <%}%>
-                                </td>
-                                <td>
-                                    <%if(category.isListed){%>
-                                        <button class="btn btn-danger">
-                                            <a href="/admin/listCategory?id=<%=category._id%>" class="text-white"
-                                                style="text-decoration: none;">Unlist</a>
-                                        </button>
-                                        <%}else{%>
-                                            <button class="btn btn-success">
-                                                <a href="/admin/unlistCategory?id=<%=category._id%>" class="text-white"
-                                                    style="text-decoration: none;">List</a>
-                                            </button>
-                                            <%}%>
-                                </td>
-                                <td>
-                                    <a href="/admin/editCategory?id=<%=category._id%>" class="btn btn-info">Edit</a>
-                                </td>
-                            </tr>
-                            <%})%>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    fetch('/admin/addCategory', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, description }) })
+      .then(r => { if (!r.ok) return r.json().then(e => { throw new Error(e.error); }); return r.json(); })
+      .then(() => location.reload())
+      .catch(e => Swal.fire({ icon:'error', title:'Error', text: e.message || 'Failed to add category.' }));
+  }
 
-        <div class="pagination-container">
-            <% if (currentPage> 1) { %>
-                <a href="?page=<%= currentPage - 1 %>&search=<%= typeof search !== 'undefined' ? search : '' %>"
-                    style="text-decoration: none;">&laquo;</a>
-                <% } %>
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
 
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                        <% if (i===currentPage) { %>
-                            <span class="current-page">
-                                <%= i %>
-                            </span>
-                            <% } else { %>
-                                <a href="?page=<%= i %>&search=<%= typeof search !== 'undefined' ? search : '' %>"
-                                    style="text-decoration: none;">
-                                    <%= i %>
-                                </a>
-                                <% } %>
-                                    <% } %>
+  async function addOffer(categoryId) {
+    const { value: amount } = await Swal.fire({ title:'Category Offer', input:'number', inputLabel:'Offer Percentage (0–100)', inputPlaceholder:'e.g. 15', showCancelButton:true });
+    if (!amount) return;
+    const res = await fetch('/admin/addCategoryOffer', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ percentage:amount, categoryId }) });
+    const data = await res.json();
+    if (data.status) { Swal.fire({ icon:'success', title:'Offer Added!', timer:1500, showConfirmButton:false }); setTimeout(()=>location.reload(), 1500); }
+    else Swal.fire({ icon:'error', title:'Failed', text: data.message });
+  }
 
-                                        <% if (currentPage < totalPages) { %>
-                                            <a href="?page=<%= currentPage + 1 %>&search=<%= typeof search !== 'undefined' ? search : '' %>"
-                                                style="text-decoration: none;">&raquo;</a>
-                                            <% } %>
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchForm = document.querySelector('.search-container form');
-            const searchInput = searchForm.querySelector('input[name="search"]');
-
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentSearch = urlParams.get('search');
-            if (currentSearch) {
-                searchInput.value = currentSearch;
-            }
-
-
-            searchInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    searchForm.submit();
-                }
-            });
-
-        
-            searchInput.addEventListener('input', function () {
-                if (this.value.trim() === '') {
-             
-                }
-            });
-        });
-    </script>
-
-
-    <script>
-
-        function handleFormSubmit(event) {
-
-            event.preventDefault();
-            if (!validateForm()) {
-                return;
-            }
-
-            const name = document.getElementsByName("name")[0].value;
-            const description = document.getElementById("descriptionId").value;
-
-            fetch('/admin/addCategory', {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify({ name, description })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.error);
-                        })
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    location.reload();
-                })
-                .catch(error => {
-                    if (error.message === "Category already exists") {
-                        Swal.fire({
-
-                            icon: 'error',
-                            title: "Oops",
-                            text: "Category already exists"
-                        })
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops",
-                            text: "An error occured while adding category",
-                        })
-                    }
-                })
-
-
-        }
-
-
-        function validateForm() {
-
-            clearErrorMessages();
-            const name = document.getElementsByName("name")[0].value.trim();
-            const description = document.getElementById("descriptionId").value.trim();
-            isValid = true;
-
-            if (name === "") {
-                displayErrorMessage("name-error", "Please enter a name");
-                isValid = false;
-            } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-                displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
-                isValid = false;
-            }
-            if (description === "") {
-                displayErrorMessage("description-error", "Please enter the description");
-                isValid = false
-            }
-
-            return isValid;
-        }
-
-        function displayErrorMessage(elementId, message) {
-
-            var errorElement = document.getElementById(elementId);
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
-        }
-
-        function clearErrorMessages() {
-
-            const errorElements = document.getElementsByClassName("error-message");
-            Array.from(errorElements).forEach((element) => {
-                element.innerText = "";
-                element.style.display = "none";
-            });
-        }
-
-
-        async function addOffer(categoryId) {
-            const { value: amount } = await Swal.fire({
-                title: "Offer in percentage",
-                input: "number",
-                inputLabel: "Percentage",
-                inputPlaceholder: "%",
-            });
-
-            if (amount) {
-
-                try {
-                    const response = await fetch("/admin/addCategoryOffer", {
-                        method: "POST",
-                        headers: {
-                            'content-type': "application/json",
-
-                        },
-                        body: JSON.stringify({
-                            percentage: amount,
-                            categoryId: categoryId,
-                        }),
-                    });
-
-                    const data = await response.json();
-                    if (response.ok && data.status === true) {
-                        Swal.fire(
-                            "Offer added",
-                            "The offer has been added",
-                            "success"
-                        ).then(() => {
-                            location.reload();
-                        })
-                    } else {
-
-                        Swal.fire("Failed", data.message || "Adding offer failed", "error");
-                    }
-                } catch (error) {
-
-                    Swal.fire(
-                        "Error",
-                        "An error occured while adding the offer",
-                        "error"
-                    );
-                    console.log("Error adding offer", error);
-                }
-
-            }
-        }
-
-        async function removeOffer(categoryId) {
-
-            try {
-
-                const response = await fetch('/admin/removeCategoryOffer', {
-                    method: "POST",
-                    headers: {
-                        'content-type': "application/json"
-                    },
-                    body: JSON.stringify({
-                        categoryId: categoryId,
-                    })
-                })
-
-                const data = await response.json();
-
-                if (response.ok && data.status === true) {
-
-                    Swal.fire(
-                        "Offer removed",
-                        "Offer has been removed",
-                        "success"
-                    ).then(() => {
-
-                        location.reload();
-                    })
-                } else {
-
-                    Swal.fire("Failed", data.message || "Removing offer failed", "error");
-
-                }
-
-            } catch (error) {
-
-                Swal.fire(
-                    "Error",
-                    "An error occured while removing the offer",
-                    "error"
-                );
-                console.error("Error removing offer", error)
-
-            }
-        }
-
-
-
-
-    </script>
+  async function removeOffer(categoryId) {
+    const res = await fetch('/admin/removeCategoryOffer', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ categoryId }) });
+    const data = await res.json();
+    if (data.status) { Swal.fire({ icon:'success', title:'Offer Removed!', timer:1500, showConfirmButton:false }); setTimeout(()=>location.reload(), 1500); }
+    else Swal.fire({ icon:'error', title:'Failed', text: data.message });
+  }
+</script>
+</body>
+</html>

@@ -107,9 +107,61 @@ const deleteCoupon = async (req, res) => {
     }
 };
 
+const editCouponPage = async (req, res) => {
+    try {
+        const coupon = await Coupon.findById(req.query.id);
+        if (!coupon) return res.redirect('/admin/coupons');
+        res.render('edit-coupon', { coupon });
+    } catch (error) {
+        console.error('Error rendering edit coupon:', error);
+        res.redirect('/admin/coupons');
+    }
+};
+
+const updateCoupon = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            code,
+            description,
+            discountPercentage,
+            offerPrice,
+            minimumPurchase,
+            maximumPurchase,
+            expireOn,
+            status
+        } = req.body;
+        
+        let updateData = {
+            code: code.toUpperCase(),
+            description,
+            discountPercentage: discountPercentage || undefined,
+            offerPrice: offerPrice || undefined,
+            minimumPurchase,
+            maximumPurchase,
+            expireOn: new Date(expireOn)
+        };
+        
+        if (status) updateData.status = status;
+        if (!discountPercentage) updateData.$unset = { discountPercentage: 1 };
+        if (!offerPrice) updateData.$unset = { ...updateData.$unset, offerPrice: 1 };
+        
+        await Coupon.findByIdAndUpdate(id, updateData);
+        
+        req.session.successMessage = 'Coupon updated successfully!';
+        res.redirect('/admin/coupons');
+    } catch (error) {
+        console.error('Error updating coupon:', error);
+        req.session.errorMessage = 'Failed to update coupon';
+        res.redirect('/admin/coupons');
+    }
+};
+
 module.exports = {
     getCoupon,
     addCoupon,
     createCoupon,
-    deleteCoupon
+    deleteCoupon,
+    editCouponPage,
+    updateCoupon
 };

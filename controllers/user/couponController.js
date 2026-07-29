@@ -27,11 +27,9 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-
         const cart = await Cart.findOne({ userId });
         const cartTotal = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
 
-     
         if (cartTotal < coupon.minimumPurchase) {
             return res.json({
                 success: false,
@@ -39,7 +37,6 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-    
         if (cartTotal > coupon.maximumPurchase) {
             return res.json({
                 success: false,
@@ -93,20 +90,17 @@ const removeCoupon = async (req, res) => {
             });
         }
 
-    
         await Coupon.findByIdAndUpdate(
             cart.appliedCoupon.couponId,
             { $pull: { userId: userId } }
         );
 
-       
         cart.appliedCoupon = {
             couponId: null,
             discount: 0
         };
         await cart.save();
 
-      
         const cartTotal = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
         
         res.json({
@@ -132,14 +126,12 @@ const getAvailableCoupons = async (req, res) => {
         const cart = await Cart.findOne({ userId });
         const cartTotal = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
 
-     
         const coupons = await Coupon.find({
             status: 'active',
             expireOn: { $gt: new Date() },
             isList: true
         });
 
-      
         const allCoupons = coupons.map(coupon => {
             const isWithinRange = cartTotal >= coupon.minimumPurchase && cartTotal <= coupon.maximumPurchase;
             const notUsedByUser = !coupon.userId.includes(userId);

@@ -8,7 +8,6 @@ const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const Wallet = require('../../models/walletSchema')
 
-
 const loadHomePage = async (req, res) => {
     try {
         const user = req.session.user;
@@ -31,6 +30,7 @@ const loadHomePage = async (req, res) => {
 
         const renderData = {
             products: productData,
+            categories: categories,
             error: null
         };
 
@@ -71,11 +71,8 @@ const about = async (req, res) => {
             }
         }
 
-
-
         res.render('about', renderObj);
     } catch (error) {
-        console.log('error loading about page', error);
         res.render('page-404');
 
     }
@@ -100,11 +97,8 @@ const contact = async (req, res) => {
             } 
         }
 
-
-
         res.render('contact', renderObj);
     } catch (error) {
-        console.log('Error loading contact page : ', error);
         res.render('page-404');
 
     }
@@ -126,7 +120,6 @@ const loadSignIn = async (req, res) => {
 
     } catch (error) {
 
-        console.log('page not loading', error);
         res.status(500).send('Server error');
     }
 }
@@ -136,7 +129,6 @@ const loadSignUp = async (req, res) => {
 
         return res.render('sign-up');
     } catch (error) {
-        console.log('page not found', error);
         res.status(500).send('Server error');
 
     }
@@ -148,7 +140,6 @@ function generateOtp() {
 
 async function sendVerificationEmail(email, otp) {
     try {
-
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             port: 587,
@@ -179,7 +170,7 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
     try {
-        const { name, mobile, email, password, cPassword, referralCode } = req.body;
+        const { name, email, password, cPassword, referralCode } = req.body;
 
         if (password !== cPassword) {
             return res.render('sign-up', { message: "Passwords do not match" });
@@ -195,7 +186,6 @@ const signup = async (req, res) => {
 
         const pendingUser = {
             name,
-            phone: mobile,
             email,
             password: hashedPassword,
             referalCode: newReferralCode,
@@ -203,55 +193,29 @@ const signup = async (req, res) => {
             isBlocked: false
         };
 
-     
         if (referralCode) {
             const referrer = await User.findOne({ referalCode: referralCode });
-
             if (referrer) {
-       
                 pendingUser.referredBy = referrer._id;
-
-          
-                let referrerWallet = await Wallet.findOne({ userId: referrer._id });
-                if (!referrerWallet) {
-                    referrerWallet = new Wallet({ 
-                        userId: referrer._id,
-                        balance: 0
-                    });
-                }
-
-               
-                try {
-                    await referrerWallet.addRefund(100, null, 'Referral Signup Bonus', 'referral');
-                    
-               
-                    referrer.referralCount += 1;
-                    await referrer.save();
-                } catch (error) {
-                    console.error("Error adding referral bonus:", error);
-                }
             }
         }
 
         const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email, otp);
 
+        const emailSent = await sendVerificationEmail(email, otp);
         if (!emailSent) {
-            return res.json("Email-error");
         }
 
         req.session.userOtp = otp;
         req.session.pendingUser = pendingUser;
 
         res.render("signupOtp");
-        console.log("OTP sent", otp);
 
     } catch (error) {
         console.error("signup error", error);
         res.redirect("/pageNotFound");
     }
 };
-
 
 const verifyOtp = async (req, res) => {
     try {
@@ -270,37 +234,30 @@ const verifyOtp = async (req, res) => {
             const newUser = new User(pendingUser);
             await newUser.save();
 
-           
             const newWallet = new Wallet({
                 userId: newUser._id,
                 balance: 0
             });
             await newWallet.save();
 
-            
             if (newUser.referredBy) {
                 try {
-                    
-                    let referrerWallet = await Wallet.findOne({ userId: newUser.referredBy });
-                    
-                   
-                    if (!referrerWallet) {
-                        referrerWallet = new Wallet({
-                            userId: newUser.referredBy,
-                            balance: 0
-                        });
-                    }
+                    const referrer = await User.findById(newUser.referredBy);
+                    if (referrer) {
+                        let referrerWallet = await Wallet.findOne({ userId: referrer._id });
+                        if (!referrerWallet) {
+                            referrerWallet = new Wallet({ userId: referrer._id, balance: 0 });
+                        }
+                        await referrerWallet.addRefund(100, null, `Referral bonus for ${newUser.email}`, 'referral');
+                        
+                        referrer.referralCount += 1;
+                        await referrer.save();
 
-                   
-                    await referrerWallet.addRefund(
-                        100, 
-                        null, 
-                        `Referral bonus for ${newUser.email}`, 
-                        'referral'
-                    );
+                        // Give sign-up bonus to the new user for using a referral code
+                        await newWallet.addRefund(100, null, 'Welcome Referral Bonus', 'referral');
+                    }
                 } catch (error) {
                     console.error("Error processing referral bonus:", error);
-                   
                 }
             }
 
@@ -313,7 +270,6 @@ const verifyOtp = async (req, res) => {
                 });
             });
 
-           
             req.session.userOtp = null;
             req.session.pendingUser = null;
 
@@ -353,7 +309,6 @@ const resendOtp = async (req, res) => {
         const emailSent = await sendVerificationEmail(pendingUser.email, otp);
 
         if (emailSent) {
-            console.log("Resend OTP:", otp);
             return res.status(200).json({
                 success: true,
                 message: "OTP Resent Successfully"
@@ -375,6 +330,12 @@ const resendOtp = async (req, res) => {
 const signin = async (req, res) => {
     try {
         const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Please fill in all fields'
+            });
+        }
         const trimmedEmail = email.trim();
         const trimmedPassword = password.trim();
 
@@ -431,19 +392,16 @@ const logout = async (req, res) => {
 
         req.session.destroy((err) => {
             if (err) {
-                console.log("Session destruction error", err.message);
                 return res.redirect("/pageNotFound");
             }
             return res.redirect("/signin")
         })
     } catch (error) {
 
-        console.log("Logout error", error);
         res.redirect('/pageNotFound')
 
     }
 }
-
 
 const getShopPage = async (req, res) => {
     try {
@@ -608,7 +566,8 @@ const getProductDetails = async (req, res) => {
             product: productData,
             relatedProducts: relatedProducts,
             user: null,
-            isInWishlist: false
+            isInWishlist: false,
+            canReview: false
         };
 
         if (user) {
@@ -616,13 +575,27 @@ const getProductDetails = async (req, res) => {
             if (userData) {
                 renderData.user = userData;
 
-
                 const wishlist = await Wishlist.findOne({
                     userId: user,
                     'products.productId': productId
                 });
 
                 renderData.isInWishlist = !!wishlist;
+
+                const Order = require('../../models/orderSchema');
+                const Review = require('../../models/reviewSchema');
+                
+                const hasPurchased = await Order.findOne({
+                    userId: user,
+                    status: 'Delivered',
+                    'orderedItems.product': productId,
+                    'orderedItems.status': { $ne: 'Cancelled' }
+                });
+
+                if (hasPurchased) {
+                    const hasReviewed = await Review.findOne({ productId: productId, userId: user });
+                    renderData.canReview = !hasReviewed;
+                }
             }
         }
 
@@ -647,7 +620,5 @@ module.exports = {
     logout,
     getShopPage,
     getProductDetails,
-
-
 
 }

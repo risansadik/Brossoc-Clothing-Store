@@ -1,249 +1,127 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password OTP — Brossoc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --green: #4a5225; --bg: #f4f5f3; --white: #fff; --border: #e2e5e0; --text: #1a1a1a; --muted: #6b7280; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 380px; padding: 40px 32px; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.05); }
+        .auth-brand { font-size: 1.4rem; font-weight: 700; color: var(--green); text-decoration: none; display: block; margin-bottom: 28px; }
+        .auth-title { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .auth-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+        .otp-inputs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .otp-input { width: 52px; height: 56px; border: 1px solid var(--border); border-radius: 8px; text-align: center; font-size: 1.4rem; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--text); background: var(--bg); transition: border-color 0.2s, box-shadow 0.2s; }
+        .otp-input:focus { outline: none; border-color: var(--green); background: var(--white); box-shadow: 0 0 0 3px rgba(59,93,80,0.1); }
+        .timer-text { font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; }
+        .timer-text span { font-weight: 600; color: var(--text); }
+        .resend-row { font-size: 0.85rem; color: var(--muted); margin-bottom: 24px; }
+        .resend-row a { color: var(--green); font-weight: 600; text-decoration: none; }
+        .btn-primary { display: block; width: 100%; padding: 12px; background: var(--green); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-primary:hover { background: #3a411d; }
+    </style>
+    <style>
+        .swal2-popup.boxy-modal { border-radius: 8px !important; border: 1px solid var(--border) !important; padding: 20px !important; width: auto !important; max-width: 380px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; }
 
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-color: white;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 400px;
-        text-align: center;
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 24px;
-        font-weight: 500;
-        color: #000;
-        margin-bottom: 8px;
-    }
-
-    h2 {
-        font-size: 20px;
-        font-weight: normal;
-        color: #000;
-        margin-bottom: 20px;
-    }
-
-    .timer {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
-    .otp-inputs {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .otp-input {
-        width: 40px;
-        height: 40px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        text-align: center;
-        font-size: 18px;
-        color: #000;
-    }
-
-    .otp-input:focus {
-        outline: none;
-        border-color: #666;
-    }
-
-    .resend {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
-    .resend a {
-        color: #2d6a4f;
-        text-decoration: none;
-    }
-
-    .verify-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: #2d6a4f;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-</style>
-
+        .swal2-icon { transform: scale(0.65) !important; margin: 10px auto 10px auto !important; border: none !important; }
+        .swal2-success { border-color: var(--text) !important; color: var(--text) !important; }
+        .swal2-success [class^="swal2-success-line"] { background-color: var(--text) !important; }
+        .swal2-success .swal2-success-ring { display: none !important; }
+        .swal2-error { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-error [class^="swal2-x-mark-line"] { background-color: var(--text) !important; }
+        .swal2-warning { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-info { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-title { font-family: 'Inter', sans-serif !important; font-size: 1.1rem !important; color: var(--text) !important; font-weight: 700 !important; margin-bottom: 8px !important; padding: 0 !important; }
+        .swal2-html-container { font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; color: var(--muted) !important; margin: 0 0 16px 0 !important; padding: 0 !important; }
+        .swal2-actions { margin-top: 0 !important; gap: 8px !important; }
+        .swal2-confirm.btn-primary { background: var(--text) !important; color: #fff !important; border-radius: 6px !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+        .swal2-cancel.btn-secondary { background: var(--bg) !important; color: var(--text) !important; border-radius: 6px !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: 1px solid var(--border) !important; }
+        .swal2-popup.boxy-toast { border-radius: 6px !important; padding: 12px 16px !important; border: 1px solid var(--border) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; font-family: 'Inter', sans-serif !important; width: auto !important; }
+        .swal2-toast .swal2-title { font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+        div:where(.swal2-container).swal2-top-end>.swal2-popup { margin-top: 20px !important; margin-right: 24px !important; }
+    </style>
+    <script>
+        if (typeof Swal !== 'undefined') {
+            const originalSwalFire = Swal.fire;
+            Swal.fire = function() {
+                let opts = {};
+                if (typeof arguments[0] === 'string') {
+                    opts = { title: arguments[0], text: arguments[1], icon: arguments[2] };
+                } else {
+                    opts = { ...arguments[0] };
+                }
+                const requiresResponse = opts.showCancelButton || opts.showDenyButton || opts.input || (opts.allowOutsideClick === false && !opts.timer);
+                if (!requiresResponse && opts.toast === undefined && !opts.timerProgressBar) {
+                    opts.toast = true; opts.position = 'top-end'; opts.showConfirmButton = false; opts.timer = opts.timer || 2500; opts.timerProgressBar = true; opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+                } else if (!opts.toast) {
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-modal', confirmButton: 'btn-primary', cancelButton: 'btn-secondary' }; opts.buttonsStyling = false;
+                } else {
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+                }
+                return originalSwalFire.call(Swal, opts);
+            };
+        }
+    </script>
+</head>
 <body>
     <form action="/verify-passForgot-otp" id="otpForm" method="post" onsubmit="return validateOTPForm()">
-        <div class="container">
-            <h1>OTP</h1>
-            <h2>Verification Code</h2>
-
-            <div class="timer">
-                Resend OTP in : <span id="timer">57</span>sec
-            </div>
-
+        <div class="auth-card">
+            <a href="/" class="auth-brand">Brossoc</a>
+            <h1 class="auth-title">Check your email</h1>
+            <p class="auth-sub">Enter the 4-digit code sent to your email to reset your password.</p>
             <div class="otp-inputs" id="otp">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 0)">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 1)">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 2)">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 3)">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 0)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 1)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 2)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 3)" inputmode="numeric">
             </div>
-
-            <div class="resend">
-                Didn't get the code? <a href="#" onclick="resendOTP(); return false;">Click here</a>
-            </div>
-
-            <button class="verify-btn">Verify OTP</button>
+            <p class="timer-text">Resend in <span id="timer">57</span>s</p>
+            <p class="resend-row">Didn't receive it? <a href="#" id="resendLink" onclick="resendOTP(); return false;">Resend code</a></p>
+            <button class="btn-primary" type="submit">Verify Code</button>
         </div>
     </form>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
         let timeLeft = 57;
-        const timerElement = document.getElementById('timer');
+        const timerEl = document.getElementById('timer');
+        const resendLink = document.getElementById('resendLink');
         let timerInterval;
-    
         function startTimer() {
+            resendLink.style.pointerEvents='none'; resendLink.style.opacity='0.4';
             timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    timerElement.textContent = timeLeft;
-                } else {
-                    clearInterval(timerInterval);
-                }
+                if (timeLeft > 0) { timeLeft--; timerEl.textContent = timeLeft; }
+                else { clearInterval(timerInterval); resendLink.style.pointerEvents='auto'; resendLink.style.opacity='1'; }
             }, 1000);
         }
-    
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 57;
-            timerElement.textContent = timeLeft;
-            startTimer();
-    
-            document.querySelectorAll('.otp-input').forEach(input => {
-                input.value = '';
-            });
-            document.querySelector('.otp-input').focus();
-        }
-    
         function moveToNext(input, index) {
             input.value = input.value.replace(/[^0-9]/g, '');
-    
-            if (input.value.length === 1) {
-                if (index < 3) {
-                    document.querySelectorAll('.otp-input')[index + 1].focus();
-                }
-            }
-            if (input.value.length === 0 && index > 0) {
-                if (event.key === 'Backspace') {
-                    document.querySelectorAll('.otp-input')[index - 1].focus();
-                }
-            }
+            if (input.value.length === 1 && index < 3) document.querySelectorAll('.otp-input')[index + 1].focus();
+            if (input.value.length === 0 && index > 0 && event.key === 'Backspace') document.querySelectorAll('.otp-input')[index - 1].focus();
         }
-    
-        startTimer();
-    
         function resendOTP() {
-
-
-            fetch('/resend-forgot-otp', {
-                method: 'POST',
-            })
-            .then(response => response.json())
-            .then(data => {
+            fetch('/resend-forgot-otp', { method: 'POST' }).then(r => r.json()).then(data => {
                 if (data.success) {
-                    Swal.fire({
-                        icon: "success",
-                        title: "OTP Resent",
-                        text: "A new OTP has been sent to your email.",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    resetTimer(); 
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: data.message || "Failed to resend OTP. Please try again.",
-                    });
-                }
-            })
-            .catch(() => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "An error occurred while resending OTP. Please try again.",
-                });
+                    Swal.fire({ icon: 'success', title: 'Code sent!', showConfirmButton: false, timer: 1500 });
+                    clearInterval(timerInterval); timeLeft = 57; timerEl.textContent = timeLeft;
+                    document.querySelectorAll('.otp-input').forEach(i => i.value = '');
+                    document.querySelector('.otp-input').focus(); startTimer();
+                } else { Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to resend.' }); }
             });
         }
         function validateOTPForm() {
-
-    let otp = '';
-    document.querySelectorAll('.otp-input').forEach(input => {
-        otp += input.value;
-    });
-
-  
-    fetch('/verify-passForgot-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ otp: otp })  
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            
-            Swal.fire({
-                icon: "success",
-                title: "OTP Verified",
-                text: "OTP verification successful!",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-             
-                window.location.href = '/reset-password';  
+            let otp = ''; document.querySelectorAll('.otp-input').forEach(i => otp += i.value);
+            fetch('/verify-passForgot-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ otp }) })
+            .then(r => r.json()).then(data => {
+                if (data.success) { Swal.fire({ icon: 'success', title: 'Verified!', showConfirmButton: false, timer: 1500 }).then(() => window.location.href = '/reset-password'); }
+                else { Swal.fire({ icon: 'error', title: 'Invalid Code', text: data.message || 'Incorrect OTP.' }); }
             });
-        } else {
-            
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: data.message || "Invalid OTP. Please try again."
-            });
+            return false;
         }
-    })
-    .catch(error => {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "An error occurred during OTP verification. Please try again."
-        });
-    });
-
-    return false; 
-}
-
+        startTimer();
     </script>
-    
-
 </body>
+</html>

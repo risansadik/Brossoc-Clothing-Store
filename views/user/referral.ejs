@@ -1,324 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brossoc - Referral Program</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Add SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css">
-    <style>
-        /* Your existing styles remain unchanged */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<%- include('../../views/partials/user/profilePartials/header.ejs') %>
+<% if(false) { %><!-- VSCode Linter Trick --><html><body><div class="profile-layout"><main class="profile-main"><% } %>
 
-        :root {
-            --primary-color: #3b7254;
-            --secondary-color: #f5f5f5;
-            --text-color: #333;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css">
 
-        body {
-            background-color: #f0f0f0;
-        }
 
-        .header {
-            background-color: var(--primary-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
+<style>
+    :root { --green: #4a5225; --bg: #f4f5f3; --white: #fff; --border: #e2e5e0; --text: #1a1a1a; --muted: #6b7280; }
+    .referral-hero { background: var(--green); color: #fff; border-radius: 10px; padding: 32px 24px; text-align: center; margin-bottom: 20px; }
+    .referral-hero h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+    .referral-hero p { opacity: 0.8; font-size: 0.9rem; margin-bottom: 24px; }
+    .code-box { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 12px 20px; max-width: 320px; margin: 0 auto; }
+    .code-text { font-size: 1.1rem; font-weight: 700; letter-spacing: 3px; }
+    .btn-copy { background: #fff; color: var(--green); border: none; border-radius: 6px; padding: 8px 14px; font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+    .btn-copy:hover { opacity: 0.9; }
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; }
+    .stat-card .s-val { font-size: 1.6rem; font-weight: 700; color: var(--green); }
+    .stat-card .s-lbl { font-size: 0.78rem; color: var(--muted); font-weight: 500; margin-top: 4px; }
+    .progress-track { height: 6px; background: var(--border); border-radius: 3px; margin: 8px 0 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.5s; }
+    .how-it-works { padding: 20px; }
+    .how-it-works h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; }
+    .step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: #f2f4eb; color: var(--green); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+    .step-text strong { color: var(--green); }
+</style>
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+<h2 class="page-title">Referral Program</h2>
 
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .main-container {
-            display: flex;
-            min-height: calc(100vh - 64px);
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: white;
-            padding: 1rem;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin: 1rem 0;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem;
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-menu a:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .content {
-            flex: 1;
-            padding: 2rem;
-        }
-
-        .referral-card {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .referral-title {
-            font-size: 2rem;
-            color: var(--text-color);
-            margin-bottom: 1rem;
-        }
-
-        .referral-subtitle {
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .referral-code-container {
-            background-color: #f5f5f5;
-            padding: 1rem;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .referral-code {
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-        }
-
-        .copy-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .progress-container {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background-color: #e0e0e0;
-            border-radius: 2px;
-            margin: 1rem 0;
-        }
-
-        .progress-fill {
-            width: 60%;
-            height: 100%;
-            background-color: var(--primary-color);
-            border-radius: 2px;
-        }
-
-        .progress-text {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .txt {
-            text-decoration: none;
-            color: white;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Your existing HTML structure remains unchanged -->
-    <header class="header">
-        <div class="logo">Brossoc</div>
-        <nav class="nav-menu">
-            <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-            <a href="/about">About us</a>
-            <a href="/contact">Contact us</a>
-        </nav>
-        <div class="nav-icons">
-            <a href="/wishlist" class="txt"><span><i class="fa-solid fa-heart"></i></span></a>
-            <a href="/userProfile" class="txt"><span><i class="fa-solid fa-user"></i></span></a>
-            <a href="/cart" class="txt"><span><i class="fa-solid fa-cart-shopping"></i></span></a>
-        </div>
-    </header>
-
-    <div class="main-container">
-        <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/userProfile"><span><i class="fa-solid fa-gauge"></i></span> Dashboard</a></li>
-                <li><a href="/orders"><span><i class="fa-solid fa-box"></i></span> Orders</a></li>
-                <li><a href="/addresses"><span><i class="fa-solid fa-location-dot"></i></span> My Address</a></li>
-                <li><a href="/wallet"><span><i class="fa-solid fa-wallet"></i></span> Wallet</a></li>
-                <li><a href="/referral"><span><i class="fa-sharp fa-solid fa-users"></i></span> Referral</a></li>
-                <li><a href="/logout"><span><i class="fa-solid fa-right-from-bracket"></i></span> Logout</a></li>
-            </ul>
-        </aside>
-
-        <div class="content">
-            <div class="referral-card">
-                <h1 class="referral-title">Invite Friends, Earn Rewards</h1>
-                <p class="referral-subtitle">Earn ₹100 for every friend who signs up</p>
-                <div class="referral-code-container">
-                    <span class="referral-code"><%= referralCode %></span>
-                    <button class="copy-btn" onclick="copyReferralCode()">
-                        <i class="fa-regular fa-copy"></i>
-                        Copy
-                    </button>
-                </div>
-
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: <%=(referralCount / 10) * 100 %>%"></div>
-                    </div>
-                    <p class="progress-text"><%= referralCount %>/10 referrals until next reward tier</p>
-                </div>
-
-                <div class="referral-rewards">
-                    <h3>Your Referral Earnings</h3>
-                    <p>Total Wallet Balance: ₹<%= wallet.toFixed(2) %></p>
-                </div>
-            </div>
-        </div>
+<div class="referral-hero">
+    <h2>Invite Friends, Earn Rewards</h2>
+    <p>Earn ₹100 wallet credit for every friend who signs up using your code</p>
+    <div class="code-box">
+        <span class="code-text"><%= referralCode %></span>
+        <button class="btn-copy" onclick="copyCode()"><i class="fa-regular fa-copy"></i> Copy</button>
     </div>
+</div>
 
-    <!-- Add SweetAlert2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
-    
-    <script>
-        function copyReferralCode() {
-            const referralCode = document.querySelector('.referral-code').textContent.trim();
-            
-            navigator.clipboard.writeText(referralCode).then(() => {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Referral code copied to clipboard',
-                    icon: 'success',
-                    confirmButtonColor: '#3b7254',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false
-                });
-            }).catch(() => {
-                // Fallback for browsers that don't support clipboard API
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = referralCode;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
-                
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Referral code copied to clipboard',
-                    icon: 'success',
-                    confirmButtonColor: '#3b7254',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false
-                });
-            });
-        }
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="s-val"><%= referralCount %></div>
+        <div class="s-lbl">Successful Referrals</div>
+        <div class="progress-track"><div class="progress-fill" style="width:<%= Math.min((referralCount / 10) * 100, 100) %>%"></div></div>
+        <div style="font-size:0.72rem;color:var(--muted);"><%= referralCount %>/10 for next tier</div>
+    </div>
+    <div class="stat-card">
+        <div class="s-val">₹<%= (wallet || 0).toFixed(0) %></div>
+        <div class="s-lbl">Wallet Balance Earned</div>
+    </div>
+</div>
 
-        function shareReferralCode() {
-            const referralCode = document.querySelector('.referral-code').textContent.trim();
-            const shareText = `Join Brossoc and use my referral code ${referralCode} to get ₹100!`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Brossoc Referral',
-                    text: shareText
-                }).then(() => {
-                    Swal.fire({
-                        title: 'Shared!',
-                        text: 'Thank you for sharing',
-                        icon: 'success',
-                        confirmButtonColor: '#3b7254',
-                        timer: 2000,
-                        timerProgressBar: true,
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false
-                    });
-                }).catch((error) => {
-                    console.error('Error sharing:', error);
-                    showShareFallback();
-                });
-            } else {
-                showShareFallback();
-            }
-        }
+<div class="card" style="padding:0;overflow:hidden;">
+    <div class="how-it-works">
+        <h3>How it works</h3>
+        <div class="step"><div class="step-num">1</div><div class="step-text">Share your referral code with friends</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Friend signs up using your code</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">You both earn <strong>₹100</strong> in wallet credits</div></div>
+    </div>
+</div>
 
-        function showShareFallback() {
-            const referralCode = document.querySelector('.referral-code').textContent.trim();
-            Swal.fire({
-                title: 'Share Your Referral Code',
-                text: `Your referral code is: ${referralCode}`,
-                icon: 'info',
-                confirmButtonColor: '#3b7254',
-                showCancelButton: true,
-                confirmButtonText: 'Copy Code',
-                cancelButtonText: 'Close'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    copyReferralCode();
-                }
-            });
-        }
-    </script>
+<script>
+
+    function copyCode() {
+        const code = '<%= referralCode %>';
+        navigator.clipboard.writeText(code).then(() => {
+            Swal.fire({ icon: 'success', title: 'Copied!', text: code, showConfirmButton: false, timer: 1500, toast: true, position: 'top-end' });
+        }).catch(() => {
+            const el = document.createElement('textarea'); el.value = code; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            Swal.fire({ icon: 'success', title: 'Copied!', showConfirmButton: false, timer: 1200, toast: true, position: 'top-end' });
+        });
+    }
+</script>
+
+        </main>
+    </div>
 </body>
 </html>

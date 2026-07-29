@@ -1,121 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Contact Us - Brossoc</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="css/tiny-slider.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+<%- include('../partials/user/header') %>
 
-	<%-include('../../views/partials/user/header.ejs')%>
-</head>
-<body>
 
-<!-- Start Hero Section -->
-<div class="hero">
-    <div class="container">
-        <div class="row justify-content-between">
-            <div class="col-lg-5">
-                <div class="intro-excerpt">
-                    <h1>Get in Touch</h1>
-                    <p class="mb-4">Have questions about our vintage-inspired collections? Looking for style advice? We're here to help you create your perfect timeless wardrobe.</p>
+<style>
+    .contact-hero { background: var(--bg); padding: 64px 24px; text-align: center; border-bottom: 1px solid var(--border); }
+    .contact-hero h1 { font-size: 2.5rem; font-weight: 700; color: var(--text); margin-bottom: 16px; letter-spacing: -0.5px; }
+    .contact-hero p { font-size: 1.1rem; color: var(--muted); max-width: 500px; margin: 0 auto; }
+    
+    .contact-section { max-width: 1000px; margin: 0 auto; padding: 64px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    
+    .info-list { display: flex; flex-direction: column; gap: 32px; }
+    .info-item { display: flex; align-items: flex-start; gap: 16px; }
+    .info-icon { width: 48px; height: 48px; background: var(--green-light); color: var(--green); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .info-text h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .info-text p { font-size: 0.95rem; color: var(--muted); line-height: 1.5; }
+    
+    .contact-form { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .contact-form h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; color: var(--text); }
+    .form-grp { margin-bottom: 16px; }
+    .form-grp label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .form-grp input, .form-grp textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); font-family: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+    .form-grp input:focus, .form-grp textarea:focus { border-color: var(--green); background: var(--white); }
+    .btn-submit { width: 100%; padding: 14px; background: var(--green); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; }
+    .btn-submit:hover { background: var(--green-dark); }
+
+    @media (max-width: 768px) { .contact-section { grid-template-columns: 1fr; gap: 40px; } }
+</style>
+
+<div class="contact-hero">
+    <h1>Contact Us</h1>
+    <p>Have a question or need assistance? Our team is here to help you.</p>
+</div>
+
+<div class="contact-section">
+    <div>
+        <div class="info-list">
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="info-text">
+                    <h4>Visit Us</h4>
+                    <p>Brossoc Headquarters<br>123 Fashion Avenue<br>Mumbai, India 400001</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="info-text">
+                    <h4>Email Us</h4>
+                    <p>support@brossoc.com<br>info@brossoc.com</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                <div class="info-text">
+                    <h4>Call Us</h4>
+                    <p>+91 98765 43210<br>Mon-Sat, 9AM to 6PM</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- End Hero Section -->
-
-<!-- Start Contact Form -->
-<div class="untree_co-section">
-    <div class="container">
-        <div class="block">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-8 pb-4">
-                    <!-- Contact Info Cards -->
-                    <div class="row mb-5">
-                        <div class="col-lg-4">
-                            <div class="service no-shadow align-items-center link horizontal d-flex active">
-                                <div class="service-icon color-1 mb-4">
-                                    <i class="fa fa-location-dot"></i>
-                                </div>
-                                <div class="service-contents">
-                                    <p>123 Fashion Avenue, Style District<br>New York, NY 10001</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4">
-                            <div class="service no-shadow align-items-center link horizontal d-flex active">
-                                <div class="service-icon color-1 mb-4">
-                                    <i class="fa fa-envelope"></i>
-                                </div>
-                                <div class="service-contents">
-                                    <p>contact@brossoc.com<br>support@brossoc.com</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4">
-                            <div class="service no-shadow align-items-center link horizontal d-flex active">
-                                <div class="service-icon color-1 mb-4">
-                                    <i class="fa fa-phone"></i>
-                                </div>
-                                <div class="service-contents">
-                                    <p>+1 (555) 123-4567<br>Mon-Fri: 9AM - 6PM EST</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contact Form -->
-                    <form>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="text-black" for="fname">First name</label>
-                                    <input type="text" class="form-control" id="fname">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="text-black" for="lname">Last name</label>
-                                    <input type="text" class="form-control" id="lname">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="text-black" for="email">Email address</label>
-                            <input type="email" class="form-control" id="email">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="text-black" for="subject">Subject</label>
-                            <select class="form-control" id="subject">
-                                <option value="">Select a subject</option>
-                                <option value="order">Order Inquiry</option>
-                                <option value="product">Product Information</option>
-                                <option value="styling">Styling Advice</option>
-                                <option value="partnership">Partnership Opportunities</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mb-5">
-                            <label class="text-black" for="message">Message</label>
-                            <textarea class="form-control" id="message" cols="30" rows="5"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-dark">Send Message</button>
-                    </form>
-
-                </div>
+    
+    <div>
+        <form class="contact-form" id="contactForm">
+            <h3>Send a Message</h3>
+            <div class="form-grp">
+                <label>Full Name</label>
+                <input type="text" id="cName" placeholder="Your name" required>
             </div>
-        </div>
+            <div class="form-grp">
+                <label>Email Address</label>
+                <input type="email" id="cEmail" placeholder="Your email" required>
+            </div>
+            <div class="form-grp">
+                <label>Message</label>
+                <textarea id="cMessage" rows="4" placeholder="How can we help?" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Send Message</button>
+        </form>
     </div>
 </div>
-<!-- End Contact Form -->
 
-<%-include('../../views/partials/user/footer.ejs')%>
+<%- include('../partials/user/footer') %>
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        Swal.fire({ title: 'Message Sent!', text: 'We will get back to you shortly.', icon: 'success', confirmButtonColor: '#4a5225' });
+        e.target.reset();
+    });
+</script>

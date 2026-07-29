@@ -23,8 +23,7 @@ const checkoutController = {
             let cartTotal = 0;
             let hasInvalidItems = false;
             let errorHtml = '';
-    
-         
+
             for (const item of cart.items) {
                 const product = await Product.findById(item.productId._id);
                 
@@ -64,8 +63,7 @@ const checkoutController = {
                 updatedItems.push(item);
                 cartTotal += item.totalPrice;
             }
-    
-          
+
             if (hasInvalidItems) {
                 cart.items = updatedItems;
                 await cart.save();
@@ -73,8 +71,7 @@ const checkoutController = {
                 if (updatedItems.length === 0) {
                     return res.redirect('/cart?showAlert=true&message=' + encodeURIComponent(errorHtml));
                 }
-    
-                
+
                 res.locals.showAlert = true;
                 res.locals.alertMessage = errorHtml;
             }
@@ -148,8 +145,6 @@ const checkoutController = {
             const userId = req.user._id;
             const { addressId, paymentMethod } = req.body;
 
-
-
             const userAddress = await Address.findOne({
                 userId,
                 'address._id': addressId
@@ -222,7 +217,6 @@ const checkoutController = {
 
             let order;
 
-
             if (paymentMethod === 'wallet') {
                 const wallet = await Wallet.findOne({ userId });
                 if (!wallet || wallet.balance < finalAmount) {
@@ -235,7 +229,6 @@ const checkoutController = {
                 orderData.paymentStatus = 'completed';
                 order = new Order(orderData);
                 await order.save();
-
 
                 await wallet.useForPurchase(finalAmount, order._id);
 
@@ -253,7 +246,6 @@ const checkoutController = {
                 await order.save();
             }
 
-
             for (const item of cart.items) {
                 await Product.updateOne(
                     {
@@ -266,11 +258,15 @@ const checkoutController = {
                 );
             }
 
-
             await User.findByIdAndUpdate(userId, {
                 $push: { orderHistory: order._id }
             });
 
+            if (cart.appliedCoupon && cart.appliedCoupon.couponId) {
+                await Coupon.findByIdAndUpdate(cart.appliedCoupon.couponId, {
+                    $push: { userId: userId }
+                });
+            }
 
             await Cart.findByIdAndDelete(cart._id);
 
@@ -311,7 +307,6 @@ const checkoutController = {
             const subtotal = cart.items.reduce((total, item) => total + item.totalPrice, 0);
             const finalAmount = subtotal - (cart.appliedCoupon?.discount || 0);
 
-           
             const razorpayOrder = await createOrder(finalAmount, userId.toString());
 
             const orderData = {
@@ -356,9 +351,13 @@ const checkoutController = {
 
         } catch (error) {
             console.error('Razorpay order creation error:', error);
+            const isAuthError = error.statusCode === 401 || (error.error && (error.error.code === 'BAD_REQUEST_ERROR' || error.error.description?.includes('Authentication failed')));
+            const message = isAuthError
+                ? 'Razorpay API credentials in .env are invalid or expired. Please update RAZORPAY_KEY_ID and RAZORPAY_SECRET.'
+                : (error.message || 'Payment initialization failed');
             res.status(500).json({
                 success: false,
-                message: 'Payment initialization failed'
+                message: message
             });
         }
     },
@@ -418,6 +417,12 @@ const checkoutController = {
             await User.findByIdAndUpdate(userId, {
                 $push: { orderHistory: order._id }
             });
+
+            if (order.couponApplied && order.couponApplied.couponId) {
+                await Coupon.findByIdAndUpdate(order.couponApplied.couponId, {
+                    $push: { userId: userId }
+                });
+            }
 
             await Cart.findByIdAndDelete(cart._id);
 

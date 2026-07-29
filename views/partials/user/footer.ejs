@@ -1,55 +1,160 @@
-<footer class="footer-section">
-    <div class="container relative">
+    <style>
+        .site-footer {
+            background: #111111;
+            color: #ffffff;
+            padding: 80px 24px 40px;
+            font-family: 'Inter', sans-serif;
+            margin-top: auto;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 48px;
+            padding-bottom: 60px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+        .footer-desc {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.8;
+            max-width: 320px;
+            margin-bottom: 24px;
+        }
+        .footer-social { display: flex; gap: 16px; }
+        .footer-social a { color: #fff; font-size: 1.1rem; opacity: 0.6; transition: opacity 0.2s; }
+        .footer-social a:hover { opacity: 1; }
+        
+        .footer-col h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: rgba(255,255,255,0.8);
+        }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; }
+        .footer-col ul li { margin-bottom: 16px; }
+        .footer-col ul li a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .footer-col ul li a:hover { color: #fff; }
+        
+        .footer-newsletter h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: rgba(255,255,255,0.8);
+        }
+        .footer-newsletter p { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 20px; }
+        .nl-form { display: flex; border-bottom: 1px solid rgba(255,255,255,0.2); transition: border-color 0.2s; }
+        .nl-form:focus-within { border-color: #fff; }
+        .nl-form input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 0;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .nl-form input::placeholder { color: rgba(255,255,255,0.3); }
+        .nl-form button {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            padding: 0 12px;
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .footer-bottom-links { display: flex; gap: 24px; }
+        .footer-bottom-links a { color: inherit; text-decoration: none; transition: color 0.2s; }
+        .footer-bottom-links a:hover { color: #fff; }
 
-        <div class="sofa-img">
-            <img src="/images/black-hoodie-removebg-preview.png" alt="Image" class="img-fluid">
-        </div>
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="subscription-form">
-                    <h3 class="d-flex align-items-center"><span class="me-1"><img src="images/envelope-outline.svg" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+        @media (max-width: 900px) {
+            .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 600px) {
+            .footer-inner { grid-template-columns: 1fr; }
+        }
+    </style>
 
-                    <form action="#" class="row g-3">
-                        <div class="col-auto">
-                            <input type="text" class="form-control" placeholder="Enter your name">
-                        </div>
-                        <div class="col-auto">
-                            <input type="email" class="form-control" placeholder="Enter your email">
-                        </div>
-                        <div class="col-auto">
-                            <button class="btn btn-primary">
-                                <span class="fa fa-paper-plane"></span>
-                            </button>
-                        </div>
-                    </form>
-
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <div class="footer-brand">BROSSOC</div>
+                <p class="footer-desc">Curating timeless menswear for the modern gentleman. Elevate your wardrobe with heritage craftsmanship and understated elegance.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-pinterest"></i></a>
                 </div>
             </div>
-        </div>
-
-        <div class="row g-5 mb-5">
-            <div class="col-lg-4">
-                <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Brossoc<span>.</span></a></div>
-                <p class="mb-4">Discover timeless fashion that tells a story. At Brossoc, we curate vintage-inspired pieces that blend classic elegance with modern sensibility. Our passion is creating fashion that makes you feel confident and unique.</p>
-
-                
-                <ul class="list-unstyled custom-social">
-                    <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
-                    <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
-                    <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
-                    <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+            <div class="footer-col">
+                <h4>Shop Collection</h4>
+                <ul>
+                    <li><a href="/shop">All Products</a></li>
+                    <li><a href="/shop?category=suits">Tailoring</a></li>
+                    <li><a href="/shop?category=knitwear">Knitwear</a></li>
+                    <li><a href="/shop?category=outerwear">Outerwear</a></li>
                 </ul>
             </div>
-
-
+            <div class="footer-col">
+                <h4>Client Services</h4>
+                <ul>
+                    <li><a href="/userProfile">My Account</a></li>
+                    <li><a href="/orders">Order History</a></li>
+                    <li><a href="/wishlist">Saved Items</a></li>
+                    <li><a href="/contact">Contact Concierge</a></li>
+                </ul>
+            </div>
+            <div class="footer-newsletter">
+                <h4>The Society</h4>
+                <p>Join our private newsletter for early access to collections and exclusive sartorial insights.</p>
+                <form class="nl-form" onsubmit="event.preventDefault(); Swal.fire({icon:'success', title:'Subscribed', text:'Welcome to The Society.'})">
+                    <input type="email" placeholder="Email Address" required>
+                    <button type="submit">Join</button>
+                </form>
+            </div>
         </div>
-
-    
-    </div>
-</footer>
-<script src="js/bootstrap.bundle.min.js"></script>
-		<script src="js/tiny-slider.js"></script>
-		<script src="js/custom.js"></script>
-	</body>
-
+        <div class="footer-bottom">
+            <div>&copy; <%= new Date().getFullYear() %> BROSSOC. ALL RIGHTS RESERVED.</div>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Settings</a>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>

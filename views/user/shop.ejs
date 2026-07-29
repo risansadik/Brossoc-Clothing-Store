@@ -1,550 +1,249 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-
-	<style>
-		/* Category Filter Styles */
-		.category-pills {
-			white-space: nowrap;
-			padding: 20px 0;
-			margin-bottom: 30px;
-			border-bottom: 1px solid #eee;
-		}
-
-		.category-pills .nav-pills {
-			display: flex;
-			gap: 15px;
-			overflow-x: auto;
-			padding-bottom: 10px;
-			-ms-overflow-style: none;
-			/* Hide scrollbar IE and Edge */
-			scrollbar-width: none;
-			/* Hide scrollbar Firefox */
-		}
-
-		.category-pills .nav-pills::-webkit-scrollbar {
-			display: none;
-			/* Hide scrollbar Chrome, Safari and Opera */
-		}
-
-		.category-pills .nav-link {
-			color: #2f2f2f;
-			background: none;
-			border: 1px solid #2f2f2f;
-			border-radius: 20px;
-			padding: 8px 20px;
-			transition: all 0.3s ease;
-			white-space: nowrap;
-		}
-
-		.category-pills .nav-link.active {
-			background-color: #2f2f2f;
-			color: white;
-		}
-
-		.category-pills .nav-link:hover:not(.active) {
-			background-color: rgba(47, 47, 47, 0.1);
-		}
-
-		/* Filter Section Styles */
-		.filter-section {
-			padding: 20px 0;
-			margin-bottom: 30px;
-			background-color: #f8f9fa;
-			border-radius: 8px;
-		}
-
-		.filter-section .form-select {
-			border: 1px solid #2f2f2f;
-			padding: 10px 15px;
-			border-radius: 4px;
-		}
-
-		/* Product Grid Styles */
-		.product-card {
-			transition: transform 0.3s ease;
-			margin-bottom: 30px;
-		}
-
-		.product-card:hover {
-			transform: translateY(-5px);
-		}
-
-		.product-thumbnail {
-			height: 300px;
-			object-fit: cover;
-		}
-
-		/* Dropdown Styles */
-		.dropdown-toggle {
-			background-color: #2f2f2f;
-			border: none;
-			padding: 10px 20px;
-			transition: all 0.3s ease;
-		}
-
-		.dropdown-toggle:hover,
-		.dropdown-toggle:focus {
-			background-color: #000000;
-		}
-
-		.dropdown-item {
-			padding: 8px 20px;
-			color: #2f2f2f;
-		}
-
-		.dropdown-item.active,
-		.dropdown-item:active {
-			background-color: #2f2f2f;
-			color: white;
-		}
-
-		.dropdown-item:hover:not(.active) {
-			background-color: rgba(47, 47, 47, 0.1);
-		}
-
-		/* Make dropdown scrollable if too many categories */
-		.dropdown-menu {
-			max-height: 300px;
-			overflow-y: auto;
-			border-radius: 4px;
-			border: 1px solid rgba(47, 47, 47, 0.1);
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-		}
-
-		/* Badge styling */
-		.badge.bg-danger {
-			background-color: #dc3545 !important;
-			font-weight: normal;
-			padding: 4px 8px;
-		}
-
-		/* Responsive adjustments */
-		@media (max-width: 768px) {
-			.category-pills {
-				margin-top: 20px;
-			}
-
-			.category-pills .nav {
-				justify-content: flex-start;
-			}
-		}
-
-		.nav-pills .nav-link.active,
-		.nav-pills .show>.nav-link {
-			background-color: #2f2f2f !important;
-			/* Dark theme color */
-			color: white !important;
-		}
-
-		.nav-pills .nav-link {
-			color: #2f2f2f;
-		}
-
-		.nav-pills .nav-link:hover {
-			color: #000000;
-		}
-
-		/* Override Bootstrap's default focus color */
-		.nav-pills .nav-link:focus {
-			box-shadow: 0 0 0 0.25rem rgba(47, 47, 47, 0.25) !important;
-		}
-
-		.sort-dropdown {
-			border: 1px solid #2f2f2f;
-			padding: 8px 15px;
-			border-radius: 4px;
-			color: #2f2f2f;
-			cursor: pointer;
-			transition: all 0.3s ease;
-			width: 100%;
-		}
-
-		.sort-dropdown:hover {
-			background-color: rgba(47, 47, 47, 0.05);
-		}
-
-		.sort-dropdown:focus {
-			outline: none;
-			box-shadow: 0 0 0 0.25rem rgba(47, 47, 47, 0.25);
-		}
-
-		@media (max-width: 768px) {
-			.sort-dropdown {
-				margin-top: 10px;
-			}
-		}
-
-
-		#priceSort {
-			margin-left: 50%;
-			width: 200px;
-
-		}
-
-
-		@media screen and (max-width: 1200px) {
-			#priceSort {
-				margin-left: 40%;
-			}
-		}
-
-		@media screen and (max-width: 992px) {
-			#priceSort {
-				margin-left: 30%;
-			}
-		}
-
-		@media screen and (max-width: 768px) {
-			#priceSort {
-				margin-left: 20%;
-				width: 180px;
-			}
-		}
-
-		@media screen and (max-width: 576px) {
-			#priceSort {
-				margin-left: 0;
-				width: 150px;
-			}
-		}
-
-
-		@media screen and (max-width: 375px) {
-			#priceSort {
-				width: 120px;
-			}
-		}
-
-		.search-bar {
-			position: relative;
-		}
-
-		.search-bar form {
-			display: flex;
-			align-items: center;
-		}
-
-		.search-bar .form-control {
-			border: 1px solid #2f2f2f;
-			padding: 10px 15px;
-			border-radius: 4px;
-		}
-
-		.search-bar .btn {
-			padding: 10px 20px;
-			border-radius: 4px;
-		}
-
-		.search-bar .btn:hover {
-			background-color: #000;
-		}
-
-
-		.filter-section {
-			padding: 20px;
-			margin-bottom: 30px;
-			background-color: #f8f9fa;
-			border-radius: 8px;
-		}
-	</style>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-
-	<meta name="description" content="" />
-	<meta name="keywords" content="bootstrap, bootstrap4" />
-
-	<!-- Bootstrap CSS -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-	<link href="css/tiny-slider.css" rel="stylesheet">
-	<link href="css/style.css" rel="stylesheet">
-	<title>shop</title>
-</head>
-
-<body>
-	<%- include("../partials/user/header") %>
-
-		<!-- Hero Section -->
-		<div class="hero">
-			<div class="container">
-				<div class="row justify-content-between">
-					<div class="col-lg-12">
-						<div class="intro-excerpt text-center">
-							<h1>Our Collection</h1>
-							<p>Discover timeless pieces that define your style</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Main Content -->
-		<div class="container">
-			<!-- Category Pills -->
-			<div class="category-pills">
-				<ul class="nav nav-pills">
-					<li class="nav-item">
-						<a class="nav-link <%= !selectedCategory ? 'active' : '' %>" href="/shop">
-							All Products
-						</a>
-					</li>
-					<% categories.forEach(category=> { %>
-						<li class="nav-item">
-							<a class="nav-link <%= selectedCategory === category._id.toString() ? 'active' : '' %>"
-								href="/shop?category=<%= category._id %>">
-								<%= category.name %>
-									<% if (category.categoryOffer> 0) { %>
-										<span class="badge bg-danger ms-1">
-											<%= category.categoryOffer %>% OFF
-										</span>
-										<% } %>
-							</a>
-						</li>
-						<% }) %>
-				</ul>
-			</div>
-
-			<!-- Filter Section -->
-			<div class="filter-section">
-				<div class="row g-3 align-items-center">
-
-					<!-- Search Bar -->
-					<div class="col-md-4">
-						<div class="search-bar">
-							<form action="/shop" method="GET" class="d-flex">
-								<input type="search" class="form-control" placeholder="Search products..." name="search"
-									value="<%= searchQuery || '' %>" aria-label="Search">
-								<button class="btn btn-dark ms-2" type="submit">
-									<i class="fas fa-search"></i>
-								</button>
-							</form>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<select class="form-select" id="priceFilter" onchange="filterByPrice(this.value)">
-							<option value="">Filter by Price</option>
-							<option value="500-1000" <%=selectedPriceRange==='500-1000' ? 'selected' : '' %>>₹500 -
-								₹1,000</option>
-							<option value="1000-5000" <%=selectedPriceRange==='1000-5000' ? 'selected' : '' %>>₹1,000 -
-								₹5,000</option>
-							<option value="5000-above" <%=selectedPriceRange==='5000-above' ? 'selected' : '' %>>₹5,000
-								& Above</option>
-						</select>
-					</div>
-					<div class="col-md-4 ms-auto">
-						<select class="form-select" id="priceSort" onchange="sortProducts(this.value)">
-							<option value="">Sort by</option>
-							<option value="low" <%=selectedSort==='low' ? 'selected' : '' %>>Price: Low to High</option>
-							<option value="high" <%=selectedSort==='high' ? 'selected' : '' %>>Price: High to Low
-							</option>
-							<option value="asc" <%=selectedSort==='asc' ? 'selected' : '' %>>Name: A to Z</option>
-							<option value="desc" <%=selectedSort==='desc' ? 'selected' : '' %>>Name: Z to A</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<!-- Product Grid -->
-			<div class="row">
-				<% if (products && products.length> 0) { %>
-					<% products.forEach(product=> { %>
-						<div class="col-12 col-md-6 col-lg-4">
-							<div class="card product-card h-100">
-								<a href="/productDetails?id=<%= product._id %>" class="text-decoration-none">
-									<% if (product.productImage && product.productImage.length> 0) { %>
-										<img src="/uploads/product-images/<%= product.productImage[0] %>"
-											alt="<%= product.productName %>" class="card-img-top product-thumbnail">
-										<% } else { %>
-											<img src="/images/placeholder.jpg" alt="No image available"
-												class="card-img-top product-thumbnail">
-											<% } %>
-												<div class="card-body">
-													<h5 class="card-title">
-														<%= product.productName %>
-													</h5>
-													<div class="d-flex justify-content-between align-items-center">
-														<div>
-															<strong class="text-success">₹<%= product.salePrice %>
-															</strong>
-															<% if (product.regularPrice> product.salePrice) { %>
-																<small
-																	class="text-muted text-decoration-line-through ms-2">
-																	₹<%= product.regularPrice %>
-																</small>
-																<% const priceDiscount=Math.round(((product.regularPrice
-																	- product.salePrice) / product.regularPrice) * 100);
-																	if (priceDiscount> 0) {
-																	%>
-																	<span class="badge bg-success ms-2">
-																		<%= priceDiscount %>% OFF
-																	</span>
-																	<% } %>
-																		<% } %>
-														</div>
-														<% if (product.categoryOffer> 0) { %>
-															<span class="badge bg-danger">
-																<%= product.categoryOffer %>% Category OFF
-															</span>
-															<% } %>
-													</div>
-													<p class="card-text mt-2 text-muted">
-														<%= product.description %>
-													</p>
-												</div>
-								</a>
-							</div>
-						</div>
-						<% }) %>
-							<% } else { %>
-								<div class="col-12">
-									<div class="alert alert-info text-center">
-										No products available at this time.
-									</div>
-								</div>
-								<% } %>
-			</div>
-			<!-- Pagination -->
-			<div class="container mt-4 mb-5">
-				<nav aria-label="Product navigation">
-					<ul class="pagination justify-content-center">
-						<% if (pagination.currentPage> 1) { %>
-							<li class="page-item">
-								<a class="page-link" href="#" data-page="<%= pagination.currentPage - 1 %>"
-									aria-label="Previous">
-									<span aria-hidden="true">&laquo;</span>
-								</a>
-							</li>
-							<% } %>
-
-								<% for(let i=1; i <=pagination.totalPages; i++) { %>
-									<% if (i===1 || i===pagination.totalPages || (i>= pagination.currentPage - 2 && i <=
-											pagination.currentPage + 2)) { %>
-											<li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
-												<a class="page-link" href="#" data-page="<%= i %>">
-													<%= i %>
-												</a>
-											</li>
-											<% } else if (i===pagination.currentPage - 3 || i===pagination.currentPage +
-												3) { %>
-												<li class="page-item disabled">
-													<a class="page-link" href="#">...</a>
-												</li>
-												<% } %>
-													<% } %>
-
-														<% if (pagination.currentPage < pagination.totalPages) { %>
-															<li class="page-item">
-																<a class="page-link" href="#"
-																	data-page="<%= pagination.currentPage + 1 %>"
-																	aria-label="Next">
-																	<span aria-hidden="true">&raquo;</span>
-																</a>
-															</li>
-															<% } %>
-					</ul>
-				</nav>
-				<div class="text-center text-muted">
-					Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %>-<%=
-							Math.min(pagination.currentPage * pagination.limit, pagination.totalProducts) %> of <%=
-								pagination.totalProducts %> products
-				</div>
-			</div>
-		</div>
-
-		<!-- Scripts -->
-		<script src="js/bootstrap.bundle.min.js"></script>
-		<script src="js/tiny-slider.js"></script>
-		<script src="js/custom.js"></script>
-		<script>
-
-			function handlePagination(page) {
-				const params = updateQueryParams({ page: page });
-				fetchAndRender(params);
-			}
-			function updateQueryParams(newParams) {
-				const urlParams = new URLSearchParams(window.location.search);
-				for (const [key, value] of Object.entries(newParams)) {
-					if (value) {
-						urlParams.set(key, value);
-					} else {
-						urlParams.delete(key);
-					}
-				}
-				return urlParams.toString();
-			}
-
-			async function fetchAndRender(params) {
-				try {
-					const response = await fetch(`/shop?${params}`, {
-						headers: {
-							'X-Requested-With': 'XMLHttpRequest'
-						}
-					});
-					if (!response.ok) throw new Error('Network response was not ok');
-					const data = await response.json();
-
-
-					const newUrl = `${window.location.pathname}?${params}`;
-					window.history.pushState({ path: newUrl }, '', newUrl);
-
-					location.reload();
-				} catch (error) {
-					console.error('Error:', error);
-				}
-			}
-
-			function sortProducts(sortValue) {
-				const params = updateQueryParams({ sort: sortValue });
-				fetchAndRender(params);
-			}
-
-			function filterByPrice(range) {
-				const params = updateQueryParams({ priceRange: range });
-				fetchAndRender(params);
-			}
-
-
-			document.querySelector('.search-bar form').addEventListener('submit', function (e) {
-				e.preventDefault();
-				const searchValue = this.querySelector('input[name="search"]').value;
-				const params = updateQueryParams({ search: searchValue });
-				fetchAndRender(params);
-			});
-
-			document.querySelectorAll('.category-pills .nav-link').forEach(link => {
-				link.addEventListener('click', function (e) {
-					
-					e.preventDefault();
-					
-					let params;
-
-					if (this.getAttribute('href') === '/shop') {
-
-						params = updateQueryParams({ category: '' });
-					} else {
-
-						const categoryId = new URL(this.href).searchParams.get('category');
-						params = updateQueryParams({ category: categoryId });
-					}
-
-					fetchAndRender(params);
-				});
-			});
-
-			document.addEventListener('click', function(e) {
-    if (e.target.closest('.pagination .page-link')) {
-        e.preventDefault();
-        const pageLink = e.target.closest('.pagination .page-link');
-        const page = pageLink.getAttribute('data-page');
-        if (page) {
-            handlePagination(page);
-        }
+<%- include('../partials/user/header') %>
+
+<style>
+    .shop-hero { background: var(--white); border-bottom: 1px solid var(--border); padding: 40px 0 32px; }
+    .shop-hero h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .shop-hero p { color: var(--muted); font-size: 0.93rem; }
+
+    /* Filter bar */
+    .filter-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 0; position: sticky; top: 60px; z-index: 50; }
+    .filter-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .search-form { display: flex; flex: 1; min-width: 200px; max-width: 340px; }
+    .search-form input { flex: 1; padding: 9px 14px; border: 1px solid var(--border); border-right: none; border-radius: 8px 0 0 8px; background: var(--bg); font-family: inherit; font-size: 0.88rem; color: var(--text); outline: none; }
+    .search-form input:focus { border-color: var(--green); background: var(--white); }
+    .search-form button { padding: 9px 14px; background: var(--green); color: #fff; border: none; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 0.88rem; }
+    
+    /* Custom Dropdowns */
+    .custom-dropdown { position: relative; min-width: 160px; font-family: inherit; font-size: 0.85rem; user-select: none; }
+    .custom-dropdown-selected { padding: 9px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+    .custom-dropdown-selected:hover, .custom-dropdown.open .custom-dropdown-selected { border-color: var(--green); background: var(--white); }
+    .custom-dropdown-selected i { font-size: 0.75rem; color: var(--muted); transition: transform 0.2s; }
+    .custom-dropdown.open .custom-dropdown-selected i { transform: rotate(180deg); }
+    .custom-dropdown-options { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--white); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); z-index: 100; display: none; overflow: hidden; }
+    .custom-dropdown.open .custom-dropdown-options { display: block; animation: dropFade 0.2s ease; }
+    .custom-option { padding: 10px 14px; color: var(--text); cursor: pointer; transition: background 0.15s; }
+    .custom-option:hover { background: var(--green); color: #fff; }
+    .custom-option.selected { font-weight: 600; background: rgba(74,82,37,0.08); color: var(--green); }
+    .custom-option.selected:hover { background: var(--green); color: #fff; }
+    @keyframes dropFade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Category pills */
+    .cat-pills { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 0; overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
+    .cat-pills::-webkit-scrollbar { display: none; }
+    .cat-pills-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; gap: 8px; }
+    .cat-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px; color: var(--muted); font-size: 0.83rem; font-weight: 500; text-decoration: none; transition: all 0.2s; background: var(--white); white-space: nowrap; }
+    .cat-pill:hover { border-color: var(--green); color: var(--green); }
+    .cat-pill.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .cat-offer { background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+
+    /* Products */
+    .shop-body { max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; }
+    .shop-meta { font-size: 0.83rem; color: var(--muted); margin-bottom: 20px; }
+    .shop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .disc-badge { display: inline-block; background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; padding: 2px 7px; border-radius: 4px; }
+    .cat-off-badge { display: inline-block; background: #f97316; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-left: 4px; }
+
+    /* Pagination */
+    .pgn { display: flex; justify-content: center; gap: 6px; margin-top: 36px; }
+    .pgn a, .pgn span { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border); color: var(--text); text-decoration: none; background: var(--white); transition: all 0.2s; cursor: pointer; }
+    .pgn a:hover { border-color: var(--green); color: var(--green); }
+    .pgn .pg-active { background: var(--green); color: #fff; border-color: var(--green); }
+    .pgn .pg-disabled { opacity: 0.4; pointer-events: none; }
+    .empty-shop { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-shop i { font-size: 2.5rem; display: block; margin-bottom: 16px; }
+
+    @media (max-width: 900px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .filter-inner { flex-wrap: wrap; } .search-form { max-width: 100%; flex: 1 1 100%; } }
+    @media (max-width: 400px) { .shop-grid { grid-template-columns: 1fr; } }
+</style>
+
+<!-- Hero -->
+<div class="shop-hero">
+    <div class="site-container">
+        <h1>Our Collection</h1>
+        <p>Discover timeless pieces that define your style</p>
+    </div>
+</div>
+
+<!-- Category Pills -->
+<div class="cat-pills">
+    <div class="cat-pills-inner">
+        <a href="/shop" class="cat-pill <%= !selectedCategory ? 'active' : '' %>">All</a>
+        <% categories.forEach(cat => { %>
+        <a href="/shop?category=<%= cat._id %>" class="cat-pill <%= selectedCategory === cat._id.toString() ? 'active' : '' %>">
+            <%= cat.name %>
+            <% if (cat.categoryOffer > 0) { %><span class="cat-offer"><%= cat.categoryOffer %>% OFF</span><% } %>
+        </a>
+        <% }); %>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <div class="filter-inner">
+        <form class="search-form" action="/shop" method="GET" id="searchForm">
+            <input type="search" name="search" placeholder="Search products..." value="<%= searchQuery || '' %>">
+            <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+        <div class="custom-dropdown" id="dd-price">
+            <div class="custom-dropdown-selected" onclick="toggleCustomDropdown('dd-price')">
+                <span id="label-priceFilter">
+                    <%= selectedPriceRange === '500-1000' ? '₹500 – ₹1,000' : selectedPriceRange === '1000-5000' ? '₹1,000 – ₹5,000' : selectedPriceRange === '5000-above' ? '₹5,000 & Above' : 'All Prices' %>
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="custom-dropdown-options">
+                <div class="custom-option <%= !selectedPriceRange ? 'selected' : '' %>" onclick="selectCustomOption('priceFilter', 'dd-price', '', 'All Prices')">All Prices</div>
+                <div class="custom-option <%= selectedPriceRange === '500-1000' ? 'selected' : '' %>" onclick="selectCustomOption('priceFilter', 'dd-price', '500-1000', '₹500 – ₹1,000')">₹500 – ₹1,000</div>
+                <div class="custom-option <%= selectedPriceRange === '1000-5000' ? 'selected' : '' %>" onclick="selectCustomOption('priceFilter', 'dd-price', '1000-5000', '₹1,000 – ₹5,000')">₹1,000 – ₹5,000</div>
+                <div class="custom-option <%= selectedPriceRange === '5000-above' ? 'selected' : '' %>" onclick="selectCustomOption('priceFilter', 'dd-price', '5000-above', '₹5,000 & Above')">₹5,000 & Above</div>
+            </div>
+            <input type="hidden" id="priceFilter" onchange="filterByPrice(this.value)" value="<%= selectedPriceRange || '' %>">
+        </div>
+        
+        <div class="custom-dropdown" id="dd-sort">
+            <div class="custom-dropdown-selected" onclick="toggleCustomDropdown('dd-sort')">
+                <span id="label-priceSort">
+                    <%= selectedSort === 'low' ? 'Price: Low to High' : selectedSort === 'high' ? 'Price: High to Low' : selectedSort === 'asc' ? 'Name: A to Z' : selectedSort === 'desc' ? 'Name: Z to A' : 'Sort by' %>
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="custom-dropdown-options">
+                <div class="custom-option <%= !selectedSort ? 'selected' : '' %>" onclick="selectCustomOption('priceSort', 'dd-sort', '', 'Sort by')">Sort by</div>
+                <div class="custom-option <%= selectedSort === 'low' ? 'selected' : '' %>" onclick="selectCustomOption('priceSort', 'dd-sort', 'low', 'Price: Low to High')">Price: Low to High</div>
+                <div class="custom-option <%= selectedSort === 'high' ? 'selected' : '' %>" onclick="selectCustomOption('priceSort', 'dd-sort', 'high', 'Price: High to Low')">Price: High to Low</div>
+                <div class="custom-option <%= selectedSort === 'asc' ? 'selected' : '' %>" onclick="selectCustomOption('priceSort', 'dd-sort', 'asc', 'Name: A to Z')">Name: A to Z</div>
+                <div class="custom-option <%= selectedSort === 'desc' ? 'selected' : '' %>" onclick="selectCustomOption('priceSort', 'dd-sort', 'desc', 'Name: Z to A')">Name: Z to A</div>
+            </div>
+            <input type="hidden" id="priceSort" onchange="sortProducts(this.value)" value="<%= selectedSort || '' %>">
+        </div>
+    </div>
+</div>
+
+<!-- Products -->
+<div class="shop-body">
+    <% if (products && products.length > 0) { %>
+    <p class="shop-meta">
+        Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %>–<%= Math.min(pagination.currentPage * pagination.limit, pagination.totalProducts) %> of <%= pagination.totalProducts %> products
+    </p>
+    <div class="shop-grid">
+        <% products.forEach(product => { %>
+        <a class="prod-card" href="/productDetails?id=<%= product._id %>">
+            <div class="img-wrap">
+                <% if (product.productImage && product.productImage.length > 0) { %>
+                <img src="<%= (product.productImage[0] && product.productImage[0].startsWith('http')) ? product.productImage[0] : '/uploads/product-images/' + product.productImage[0] %>" alt="<%= product.productName %>" loading="lazy">
+                <% } else { %>
+                <img src="/images/placeholder.jpg" alt="<%= product.productName %>">
+                <% } %>
+                <% if (product.regularPrice > product.salePrice) { %>
+                <span class="prod-badge"><%= Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100) %>% OFF</span>
+                <% } %>
+            </div>
+            <div class="prod-info">
+                <div class="prod-name"><%= product.productName %></div>
+                <div class="prod-prices">
+                    <span class="sale-price">₹<%= product.salePrice %></span>
+                    <% if (product.regularPrice > product.salePrice) { %>
+                    <span class="orig-price">₹<%= product.regularPrice %></span>
+                    <% } %>
+                </div>
+                <% if (product.categoryOffer > 0) { %>
+                <span class="cat-off-badge"><%= product.categoryOffer %>% Cat. Off</span>
+                <% } %>
+            </div>
+        </a>
+        <% }); %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (pagination.totalPages > 1) { %>
+    <div class="pgn">
+        <% if (pagination.currentPage > 1) { %>
+        <a href="#" data-page="<%= pagination.currentPage - 1 %>"><i class="fa-solid fa-chevron-left"></i></a>
+        <% } %>
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+            <% if (i === 1 || i === pagination.totalPages || (i >= pagination.currentPage - 2 && i <= pagination.currentPage + 2)) { %>
+            <a href="#" data-page="<%= i %>" class="<%= pagination.currentPage === i ? 'pg-active' : '' %>"><%= i %></a>
+            <% } else if (i === pagination.currentPage - 3 || i === pagination.currentPage + 3) { %>
+            <span class="pg-disabled">…</span>
+            <% } %>
+        <% } %>
+        <% if (pagination.currentPage < pagination.totalPages) { %>
+        <a href="#" data-page="<%= pagination.currentPage + 1 %>"><i class="fa-solid fa-chevron-right"></i></a>
+        <% } %>
+    </div>
+    <% } %>
+
+    <% } else { %>
+    <div class="empty-shop">
+        <i class="fa-regular fa-face-sad-tear"></i>
+        <p style="font-size:1rem;font-weight:600;margin-bottom:6px;">No products found</p>
+        <p style="font-size:0.88rem;">Try a different search or category.</p>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../partials/user/footer') %>
+
+<script>
+    function updateQueryParams(newParams) {
+        const urlParams = new URLSearchParams(window.location.search);
+        for (const [k, v] of Object.entries(newParams)) { v ? urlParams.set(k, v) : urlParams.delete(k); }
+        return urlParams.toString();
     }
-});
-		</script>
-</body>
+    function fetchAndRender(params) {
+        const newUrl = `${window.location.pathname}?${params}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        location.reload();
+    }
+    function sortProducts(v) { fetchAndRender(updateQueryParams({ sort: v })); }
+    function filterByPrice(v) { fetchAndRender(updateQueryParams({ priceRange: v })); }
 
-</html>
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const v = this.querySelector('input[name="search"]').value;
+        fetchAndRender(updateQueryParams({ search: v }));
+    });
+    document.querySelectorAll('.cat-pill').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const catId = this.href.includes('category=') ? new URL(this.href).searchParams.get('category') : '';
+            fetchAndRender(updateQueryParams({ category: catId }));
+        });
+    });
+    document.addEventListener('click', function(e) {
+        const a = e.target.closest('.pgn a[data-page]');
+        if (a) { e.preventDefault(); fetchAndRender(updateQueryParams({ page: a.dataset.page })); }
+    });
+</script>
+<script>
+    // Custom Dropdown Logic
+    function toggleCustomDropdown(id) {
+        document.querySelectorAll('.custom-dropdown').forEach(dd => {
+            if (dd.id !== id) dd.classList.remove('open');
+        });
+        document.getElementById(id).classList.toggle('open');
+    }
+
+    function selectCustomOption(inputId, dropdownId, value, label) {
+        document.getElementById('label-' + inputId).textContent = label;
+        const input = document.getElementById(inputId);
+        input.value = value;
+        document.getElementById(dropdownId).classList.remove('open');
+        
+        // Update selected class visually
+        const opts = document.getElementById(dropdownId).querySelectorAll('.custom-option');
+        opts.forEach(opt => opt.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        // Trigger the onchange manually
+        input.dispatchEvent(new Event('change'));
+    }
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-dropdown')) {
+            document.querySelectorAll('.custom-dropdown.open').forEach(dd => dd.classList.remove('open'));
+        }
+    });
+</script>

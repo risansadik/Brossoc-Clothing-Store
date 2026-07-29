@@ -1,263 +1,298 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — Brossoc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-
-    body {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    ::-webkit-scrollbar {
-
-        display: none;
-    }
-
-
-    .form-container {
-        flex: 1;
-        padding: 40px;
-        max-width: 480px;
-        margin-top: 5%;
-    }
-
-    .image-container {
-        flex: 1;
-        background-color: #f5f5f5;
-        display: none;
-    }
-
-    @media (min-width: 768px) {
-        .image-container {
-            display: block;
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --green: #4a5225;
+            --green-dark: #3a411d;
+            --bg: #f4f5f3;
+            --white: #ffffff;
+            --border: #e2e5e0;
+            --text: #1a1a1a;
+            --muted: #6b7280;
         }
-    }
+        ::-webkit-scrollbar { width: 0px; background: transparent; display: none; }
+        * { scrollbar-width: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+        }
+        .auth-image {
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            object-fit: cover;
+            border-right: 1px solid var(--border);
+        }
+        .auth-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 380px;
+            /* No border/shadow, minimalist layout */
+        }
+        .auth-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .auth-title {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+        }
+        .auth-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 40px; line-height: 1.5; }
+        .auth-sub a { color: var(--text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+        
+        .form-field { margin-bottom: 24px; position: relative; }
+        .form-field label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+        .form-field input {
+            width: 100%;
+            padding: 8px 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            background: transparent;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--text);
+            box-shadow: none;
+        }
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.82rem;
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: -8px;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.93rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            letter-spacing: 0.2px;
+        }
+        .btn-primary:hover {
+            background: var(--green-dark);
+            transform: translateY(-1px);
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .btn-google:hover {
+            background: var(--bg);
+            border-color: #aaa;
+        }
+    </style>
+    <style>
+        .swal2-popup.boxy-modal { border-radius: 8px !important; border: 1px solid var(--border) !important; padding: 20px !important; width: auto !important; max-width: 380px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; }
 
-    h1 {
-        font-size: 24px;
-        margin-bottom: 8px;
-        color: #333;
-    }
-
-    .signup-text {
-        font-size: 14px;
-        margin-bottom: 24px;
-        color: #666;
-    }
-
-    .signup-text a {
-        color: #4A665B;
-        text-decoration: none;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    input[type="email"],
-    input[type="password"] {
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .remember-forgot {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 14px;
-    }
-
-    .remember-me {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .forgot-password {
-        color: #4A665B;
-        text-decoration: none;
-    }
-
-    .login-button {
-        background-color: #4A665B;
-        color: white;
-        padding: 12px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-top: 8px;
-    }
-
-    .divider {
-        text-align: center;
-        margin: 16px 0;
-        font-size: 14px;
-        color: #666;
-    }
-
-    .social-buttons {
-        display: flex;
-        gap: 12px;
-    }
-
-    .social-button {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background-color: white;
-        border: 1px solid #ddd;
-        color: #333;
-        padding: 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .google-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background-color: white;
-        border: 1px solid #ddd;
-        color: #333;
-        padding: 5%;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-</style>
+        .swal2-icon { transform: scale(0.65) !important; margin: 10px auto 10px auto !important; border: none !important; }
+        .swal2-success { border-color: var(--text) !important; color: var(--text) !important; }
+        .swal2-success [class^="swal2-success-line"] { background-color: var(--text) !important; }
+        .swal2-success .swal2-success-ring { display: none !important; }
+        .swal2-error { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-error [class^="swal2-x-mark-line"] { background-color: var(--text) !important; }
+        .swal2-warning { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-info { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-title { font-family: 'Inter', sans-serif !important; font-size: 1.1rem !important; color: var(--text) !important; font-weight: 700 !important; margin-bottom: 8px !important; padding: 0 !important; }
+        .swal2-html-container { font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; color: var(--muted) !important; margin: 0 0 16px 0 !important; padding: 0 !important; }
+        .swal2-actions { margin-top: 0 !important; gap: 8px !important; }
+        .swal2-confirm.btn-primary { background: var(--text) !important; color: #fff !important; border-radius: 6px !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+        .swal2-cancel.btn-secondary { background: var(--bg) !important; color: var(--text) !important; border-radius: 6px !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: 1px solid var(--border) !important; }
+        .swal2-popup.boxy-toast { border-radius: 6px !important; padding: 12px 16px !important; border: 1px solid var(--border) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; font-family: 'Inter', sans-serif !important; width: auto !important; }
+        .swal2-toast .swal2-title { font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+        div:where(.swal2-container).swal2-top-end>.swal2-popup { margin-top: 20px !important; margin-right: 24px !important; }
+    </style>
+    <script>
+        if (typeof Swal !== 'undefined') {
+            const originalSwalFire = Swal.fire;
+            Swal.fire = function() {
+                let opts = {};
+                if (typeof arguments[0] === 'string') {
+                    opts = { title: arguments[0], text: arguments[1], icon: arguments[2] };
+                } else {
+                    opts = { ...arguments[0] };
+                }
+                const requiresResponse = opts.showCancelButton || opts.showDenyButton || opts.input || (opts.allowOutsideClick === false && !opts.timer);
+                if (!requiresResponse && opts.toast === undefined && !opts.timerProgressBar) {
+                    opts.toast = true; opts.position = 'top-end'; opts.showConfirmButton = false; opts.timer = opts.timer || 2500; opts.timerProgressBar = true; opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+                } else if (!opts.toast) {
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-modal', confirmButton: 'btn-primary', cancelButton: 'btn-secondary' }; opts.buttonsStyling = false;
+                } else {
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+                }
+                return originalSwalFire.call(Swal, opts);
+            };
+        }
+    </script>
+        <style>
+        @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; }
+            .auth-image { display: none; }
+        }
+    </style>
 </head>
-
 <body>
-    <div class="form-container">
-        <h1>Welcome back</h1>
-        <p class="signup-text">Do you have an account? <a href="/signup">Create an account</a></p>
+    <img src="/uploads/product-images/prod_trench_coat_3.png" alt="Sartorial Elegance" class="auth-image">
+    <div class="auth-content">
+        <div class="auth-card">
+            <a href="/" class="auth-brand">BROSSOC</a>
+            <h1 class="auth-title">Welcome back</h1>
+            <p class="auth-sub">Enter your details to access your account. Or <a href="/signup">create one here</a>.</p>
 
-        <form action="/signin" method="post">
-            <div class="input-group">
-                <input type="email" placeholder="Email" name="email" required>
+        <form id="loginForm" action="/signin" method="post">
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="name@example.com" required>
             </div>
-        
-            <div class="input-group">
-                <input type="password" placeholder="Password" name="password" required>
+            <div class="form-field">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" placeholder="••••••••" style="padding-right: 40px;" required>
+                    <i class="fa-regular fa-eye" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--muted);"></i>
+                </div>
             </div>
-        
-            <div class="remember-forgot">
-                <a href="/forgot-password" class="forgot-password">Forgot password?</a>
-            </div>
-        
-            <button type="submit" class="login-button">Login</button>
+            <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+            <button type="submit" class="btn-primary">Sign In</button>
         </form>
 
-        <div class="divider">or continue with</div>
-        <a href="/auth/google" class="google-button" style="text-decoration: none;">
-            <i class="fab fa-google"></i>Google
+        <div class="divider">or</div>
+
+        <a href="/auth/google" class="btn-google">
+            <i class="fa-brands fa-google" style="color:#ea4335;"></i>
+            Continue with Google
         </a>
     </div>
-
-    <div class="image-container">
-        <img src="/images/korovallan.png" alt="Modern living room with green sofa and wallpaper"
-            style="width: 100%; height: 100%; object-fit: cover;">
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for URL parameters on page load
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passId = document.getElementById('password');
+            const type = passId.getAttribute('type') === 'password' ? 'text' : 'password';
+            passId.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('blocked') === 'true') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Access Denied',
-                    text: 'Your account has been blocked by admin',
-                    confirmButtonColor: '#4A665B'
-                });
+                Swal.fire({ icon: 'error', title: 'Access Denied', text: 'Your account has been blocked by admin', confirmButtonColor: '#4a5225' });
             } else if (urlParams.get('error') === 'true') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred. Please try again.',
-                    confirmButtonColor: '#4A665B'
-                });
+                Swal.fire({ icon: 'error', title: 'Error', text: 'An error occurred. Please try again.', confirmButtonColor: '#4a5225' });
             }
-        
-            // Handle form submission
-            const form = document.querySelector('form');
-            form.addEventListener('submit', async function(e) {
+
+            document.getElementById('loginForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
-                
                 try {
-                    const formData = new FormData(form);
+                    const formData = new FormData(this);
                     const response = await fetch('/signin', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            email: formData.get('email'),
-                            password: formData.get('password')
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: formData.get('email'), password: formData.get('password') })
                     });
-        
                     const data = await response.json();
-        
                     if (data.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: 'Login successful',
-                            confirmButtonColor: '#4A665B',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.href = '/';
-                        });
+                        const pendingAction = urlParams.get('pendingAction');
+                        
+                        if (pendingAction === 'addCart' || pendingAction === 'addWishlist') {
+                            const pid = urlParams.get('productId');
+                            const size = urlParams.get('size');
+                            const qty = urlParams.get('quantity') || 1;
+                            const endpoint = pendingAction === 'addCart' ? '/addCart' : '/wishlist/add';
+                            const redirectUrl = pendingAction === 'addCart' ? '/cart' : '/wishlist';
+                            
+                            Swal.fire({ title: 'Logging in...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                            
+                            try {
+                                await fetch(endpoint, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ productId: pid, size: size, quantity: qty })
+                                });
+                                window.location.href = redirectUrl;
+                            } catch (e) {
+                                window.location.href = redirectUrl;
+                            }
+                        } else {
+                            Swal.fire({ icon: 'success', title: 'Welcome back!', showConfirmButton: false, timer: 1200 }).then(() => window.location.href = '/');
+                        }
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message,
-                            confirmButtonColor: '#4A665B'
-                        });
+                        Swal.fire({ icon: 'error', title: 'Sign In Failed', text: data.message, confirmButtonColor: '#4a5225' });
                     }
-                } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred. Please try again.',
-                        confirmButtonColor: '#4A665B'
-                    });
+                } catch {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'An error occurred. Please try again.', confirmButtonColor: '#4a5225' });
                 }
             });
         });
-        </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-        crossorigin="anonymous"></script>
+    </script>
+</body>
+</html>

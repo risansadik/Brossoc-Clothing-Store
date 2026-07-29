@@ -1,145 +1,403 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="author" content="Untree.co">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	<meta name="description" content="" />
-	<meta name="keywords" content="bootstrap, bootstrap4" />
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; display: none; }
+        * { scrollbar-width: none; }
+        :root {
+            --green: #4a5225;
+            --green-dark: #3a411d;
+            --green-light: #f2f4eb;
+            --bg: #f4f5f3;
+            --white: #ffffff;
+            --border: #e2e5e0;
+            --text: #1a1a1a;
+            --muted: #6b7280;
+            --nav-h: 60px;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
 
-	<!-- Bootstrap CSS -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-	<link href="css/tiny-slider.css" rel="stylesheet">
-	<link href="css/style.css" rel="stylesheet">
-	<title>Brossoc </title>
+        /* ── SITE NAVBAR ── */
+        .site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            height: var(--nav-h);
+            background: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .site-nav .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 4px;
+            font-family: 'Playfair Display', serif;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        .site-nav .nav-links {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            gap: 16px;
+            list-style: none;
+        }
+        .site-nav .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .site-nav .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #fff;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        .site-nav .nav-links a:hover::after,
+        .site-nav .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+        .site-nav .nav-links a:hover,
+        .site-nav .nav-links a.active { color: #fff; background: transparent; }
+        .site-nav .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .site-nav .nav-actions a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 0;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .site-nav .nav-actions a:hover { color: #fff; background: transparent; }
+        .site-nav .user-drop {
+            position: relative;
+        }
+        .site-nav .user-drop::after {
+            content: ''; position: absolute; top: 100%; left: -20px; right: -20px; height: 16px; background: transparent; display: none;
+        }
+        .site-nav .user-drop:hover::after { display: block; }
+        .site-nav .user-drop .drop-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 0;
+            margin-left: 10px;
+            border-radius: 0;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .site-nav .user-drop .drop-trigger:hover { color: rgba(255,255,255,0.7); background: transparent; }
+        .site-nav .user-drop .drop-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 18px);
+            background: var(--white);
+            border: 1px solid #111111;
+            border-radius: 0;
+            width: 180px;
+            padding: 0;
+            box-shadow: none;
+            z-index: 1000;
+        }
+        .site-nav .user-drop:hover .drop-menu { display: block; }
+        .site-nav .user-drop .drop-menu a {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            height: auto;
+            gap: 12px;
+            padding: 14px 20px;
+            font-size: 0.75rem;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+        .site-nav .user-drop .drop-menu a:last-child { border-bottom: none; }
+        .site-nav .user-drop .drop-menu a:hover { background: #111111; color: #fff; }
+        .site-nav .user-drop .drop-menu a i {
+            width: 18px;
+            text-align: center;
+            font-size: 1rem;
+            transition: color 0.15s;
+        }
+        .site-nav .user-drop .drop-menu a:hover i { color: var(--text); }
+        .site-nav .user-drop .drop-menu a:hover { background: var(--bg); }
+        .site-nav .user-drop .drop-menu a.logout { color: #e53e3e; }
+        .site-nav .user-drop .drop-menu a.logout i { color: #e53e3e; }
+        .hamburger-main {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+        }
 
-	<style>
-		.dropdown {
+        /* ── MOBILE NAV DRAWER ── */
+        .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 240; }
+        .mobile-nav-drawer {
+            display: block;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100%;
+            width: 280px;
+            background: var(--white);
+            z-index: 250;
+            padding: 24px 16px;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav-drawer.open { transform: translateX(0); }
+        .mobile-nav-overlay.open { display: block; }
+        .mobile-nav-drawer .mob-brand { font-size: 1.2rem; font-weight: 700; color: var(--green); margin-bottom: 24px; display: block; text-decoration: none; }
+        .mobile-nav-drawer a { display: flex; align-items: center; gap: 10px; padding: 12px 10px; color: var(--muted); text-decoration: none; font-size: 0.93rem; font-weight: 500; border-radius: 8px; margin-bottom: 2px; transition: all 0.2s; }
+        .mobile-nav-drawer a:hover { background: var(--bg); color: var(--text); }
+        .mobile-nav-drawer .mob-divider { height: 1px; background: var(--border); margin: 12px 0; }
 
-			position: relative;
-			;
-			display: inline-block;
-		}
+        /* ── GLOBAL CONTENT ── */
+        .site-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section-title { font-size: 1.35rem; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin-bottom: 4px; }
+        .section-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 28px; }
 
-		.dropdown-content {
+        /* ── PRODUCT CARD ── */
+        .prod-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; text-decoration: none; color: var(--text); display: flex; flex-direction: column; transition: box-shadow 0.2s, transform 0.2s; }
+        .prod-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+        .prod-card .img-wrap { aspect-ratio: 3/4; overflow: hidden; background: var(--bg); position: relative; }
+        .prod-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .prod-card:hover .img-wrap img { transform: scale(1.04); }
+        .prod-card .prod-info { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .prod-card .prod-name { font-size: 0.92rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .prod-card .prod-prices { display: flex; align-items: center; gap: 8px; }
+        .prod-card .sale-price { font-weight: 700; font-size: 0.95rem; color: var(--green); }
+        .prod-card .orig-price { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; }
+        .prod-card .prod-badge { position: absolute; top: 10px; left: 10px; background: var(--green); color: #fff; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; }
 
-			display: none;
-			position: absolute;
-			;
-			background-color: white;
-			min-width: 160px;
-			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 2);
-			z-index: 1000;
-			right: 0;
+        /* ── FOOTER ── */
+        .site-footer { background: var(--green); color: rgba(255,255,255,0.85); margin-top: 64px; padding: 40px 24px 24px; }
+        .site-footer .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
+        .site-footer .footer-brand { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .site-footer .footer-desc { font-size: 0.85rem; line-height: 1.6; opacity: 0.75; }
+        .site-footer h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #fff; margin-bottom: 12px; }
+        .site-footer ul { list-style: none; }
+        .site-footer ul li { margin-bottom: 8px; }
+        .site-footer ul a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+        .site-footer ul a:hover { color: #fff; }
+        .site-footer .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 0.8rem; opacity: 0.65; text-align: center; }
 
-		}
+        /* ── CUSTOM SWEETALERT2 ── */
+        .swal2-popup.boxy-modal { border-radius: 6px !important; border: 1px solid var(--border) !important; padding: 24px !important; width: auto !important; max-width: 380px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; background: var(--white) !important; }
+        
+        .swal2-loader { border-color: var(--text) transparent var(--text) transparent !important; margin: 20px auto 10px auto !important; }
+        .swal2-icon { transform: scale(0.65) !important; margin: 10px auto 10px auto !important; border: none !important; }
+        .swal2-success { border-color: var(--text) !important; color: var(--text) !important; }
+        .swal2-success [class^="swal2-success-line"] { background-color: var(--text) !important; }
+        .swal2-success .swal2-success-ring { display: none !important; }
+        .swal2-error { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-error [class^="swal2-x-mark-line"] { background-color: var(--text) !important; }
+        .swal2-warning { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-info { border-color: transparent !important; color: var(--text) !important; }
+        .swal2-title { font-family: 'Inter', sans-serif !important; font-size: 1.1rem !important; color: var(--text) !important; font-weight: 700 !important; margin-bottom: 8px !important; padding: 0 !important; }
+        .swal2-html-container { font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; color: var(--muted) !important; margin: 0 0 16px 0 !important; padding: 0 !important; }
+        .swal2-actions { margin-top: 0 !important; gap: 8px !important; }
+        .swal2-confirm.btn-primary { background: var(--text) !important; color: #fff !important; border-radius: 6px !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+        .swal2-cancel.btn-secondary { background: var(--bg) !important; color: var(--text) !important; border-radius: 6px !important; padding: 8px 20px !important; font-family: 'Inter', sans-serif !important; font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; border: 1px solid var(--border) !important; }
+        
+        .swal2-textarea, .swal2-input { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; border: 1px solid var(--border) !important; border-radius: 6px !important; font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; padding: 12px !important; color: var(--text) !important; margin: 10px 0 20px 0 !important; background: var(--white) !important; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02) !important; transition: border-color 0.2s !important; resize: vertical !important; }
+        .swal2-textarea:focus, .swal2-input:focus { border-color: var(--text) !important; outline: none !important; }
+        select.swal2-input { appearance: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E') !important; background-repeat: no-repeat !important; background-position: right 12px top 50% !important; background-size: 10px auto !important; padding-right: 32px !important; cursor: pointer; }
+        
+        .swal2-popup.boxy-toast { border-radius: 6px !important; padding: 12px 16px !important; border: 1px solid var(--border) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; font-family: 'Inter', sans-serif !important; width: auto !important; }
+        .swal2-toast .swal2-title { font-size: 0.85rem !important; font-weight: 600 !important; margin: 0 !important; }
+        div:where(.swal2-container).swal2-top-end>.swal2-popup { margin-top: 70px !important; margin-right: 24px !important; }
 
-		.dropdown-content a {
+        @media (max-width: 768px) {
+            .site-nav .nav-links { display: none; }
+            .site-nav .user-drop { display: none; }
+            .hamburger-main { display: flex; }
+            .site-container { padding: 0 16px; }
+            .site-footer .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+        }
+    </style>
+    <script>
+        // Global SweetAlert2 Interceptor
+        if (typeof Swal !== 'undefined') {
+            const originalSwalFire = Swal.fire;
+            Swal.fire = function() {
+                let opts = {};
+                if (typeof arguments[0] === 'string') {
+                    opts = { title: arguments[0], text: arguments[1], icon: arguments[2] };
+                } else {
+                    opts = { ...arguments[0] };
+                }
 
-			color: black;
-			padding: 12px 16px;
-			text-decoration: none;
-			display: block;
-			width: 100%;
-		}
+                // If modal requires explicit user action/input, or explicitly requested a confirm button (like invoice loading)
+                const requiresResponse = opts.showCancelButton || opts.showDenyButton || opts.input || (opts.allowOutsideClick === false && !opts.timer);
+                
+                if (!requiresResponse && opts.toast === undefined && !opts.timerProgressBar) {
+                    // Convert simple info/error/success alerts to toasts
+                    opts.toast = true;
+                    opts.position = 'top-end';
+                    opts.showConfirmButton = false;
+                    opts.timer = opts.timer || 2500;
+                    opts.timerProgressBar = true;
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+                } else if (!opts.toast) {
+                    // Apply boxy styles to central modals
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-modal', confirmButton: 'btn-primary', cancelButton: 'btn-secondary' };
+                    opts.buttonsStyling = false;
+                } else {
+                    opts.customClass = { ...opts.customClass, popup: 'boxy-toast' };
+                }
 
-		.dropdown-content a:hover {
-			background-color: #405C54;
-		}
-
-		.dropdown:hover .dropdown-content {
-			display: block;
-		}
-
-		.username {
-			font-size: 1rem;
-			font-weight: bold;
-			color: #9daea8;
-			text-decoration: none;
-			margin-right: 15px;
-			padding-left: 10px;
-		}
-
-	
-	</style>
+                return originalSwalFire.call(Swal, opts);
+            };
+        }
+    </script>
 </head>
-
 <body>
 
-	<!-- Start Header/Navigation -->
-	<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
-        <div class="container">
-            <a class="navbar-brand" href="/">Brossoc<span>.</span></a>
+    <!-- Mobile Nav Drawer -->
+    <div class="mobile-nav-overlay" id="mobOverlay"></div>
+    <nav class="mobile-nav-drawer" id="mobDrawer">
+        <a href="/" class="mob-brand">Brossoc</a>
+        <a href="/"><i class="fa-solid fa-house" style="width:16px;"></i> Home</a>
+        <a href="/shop"><i class="fa-solid fa-bag-shopping" style="width:16px;"></i> Shop</a>
+        <a href="/about"><i class="fa-solid fa-info-circle" style="width:16px;"></i> About</a>
+        <a href="/contact"><i class="fa-solid fa-envelope" style="width:16px;"></i> Contact</a>
+        <div class="mob-divider"></div>
+        <a href="/wishlist"><i class="fa-regular fa-heart" style="width:16px;"></i> Wishlist</a>
+        <a href="/cart"><i class="fa-solid fa-bag-shopping" style="width:16px;"></i> Cart</a>
+        <% if (locals.user) { %>
+        <a href="/userProfile"><i class="fa-solid fa-user" style="width:16px;"></i> My Profile</a>
+        <a href="/orders"><i class="fa-solid fa-box" style="width:16px;"></i> My Orders</a>
+        <a href="/logout" class="logout-link" style="color:#e53e3e;"><i class="fa-solid fa-right-from-bracket" style="width:16px;"></i> Logout</a>
+        <% } else { %>
+        <a href="/signin"><i class="fa-solid fa-right-to-bracket" style="width:16px;"></i> Sign In</a>
+        <% } %>
+    </nav>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" 
-                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <!-- Sticky Header -->
+    <nav class="site-nav">
+        <button class="hamburger-main" id="mobToggle" aria-label="Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <a href="/" class="brand">BROSSOC</a>
+        <ul class="nav-links">
+            <li><a href="/" class="<%= locals.currentPath === '/' ? 'active' : '' %>">Home</a></li>
+            <li><a href="/shop" class="<%= locals.currentPath === '/shop' ? 'active' : '' %>">Shop</a></li>
+            <li><a href="/about" class="<%= locals.currentPath === '/about' ? 'active' : '' %>">About</a></li>
+            <li><a href="/contact" class="<%= locals.currentPath === '/contact' ? 'active' : '' %>">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="/wishlist" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
+            <a href="/cart" title="Cart"><i class="fa-solid fa-bag-shopping"></i></a>
+            <% if (locals.user) { %>
+            <div class="user-drop">
+                <div class="drop-trigger">
+                    <i class="fa-solid fa-user"></i>
+                    <span><%= locals.user.name.split(' ')[0] %></span>
+                    <i class="fa-solid fa-chevron-down" style="font-size:0.65rem;opacity:0.7;"></i>
+                </div>
+                <div class="drop-menu">
+                    <a href="/userProfile"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="/orders"><i class="fa-solid fa-box"></i> My Orders</a>
+                    <a href="/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a>
+                    <a href="/logout" class="logout logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                </div>
+            </div>
+            <% } else { %>
+            <a href="/signin" title="Sign In" style="font-size:0.8rem;font-weight:600;width:auto;padding:0 12px;gap:6px;color:#fff;">
+                <i class="fa-solid fa-user"></i>
+            </a>
+            <% } %>
+        </div>
+    </nav>
 
-            <div class="collapse navbar-collapse" id="navbarsFurni">
-                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                    <li class="nav-item <%= locals.currentPath === '/' ? 'active' : '' %>">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item <%= locals.currentPath === '/shop' ? 'active' : '' %>">
-                        <a class="nav-link" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item <%= locals.currentPath === '/about' ? 'active' : '' %>">
-                        <a class="nav-link" href="/about">About us</a>
-                    </li>
-                    <li class="nav-item <%= locals.currentPath === '/contact' ? 'active' : '' %>">
-                        <a class="nav-link" href="/contact">Contact us</a>
-                    </li>
-                </ul>
+    <script>
+        const mobToggle = document.getElementById('mobToggle');
+        const mobDrawer = document.getElementById('mobDrawer');
+        const mobOverlay = document.getElementById('mobOverlay');
+        if (mobToggle) {
+            mobToggle.addEventListener('click', () => { mobDrawer.classList.add('open'); mobOverlay.classList.add('open'); });
+            mobOverlay.addEventListener('click', () => { mobDrawer.classList.remove('open'); mobOverlay.classList.remove('open'); });
+        }
 
-				<% if (locals.user) { %>
-					<div class="dropdown">
-						<a href="#" class="sign-in-link username">
-							<%= locals.user.name %>
-						</a>
-						<div class="dropdown-content">
-							<a href="/userProfile">Profile</a>
-							<a href="/logout">Logout</a>
-						</div>
-					</div>
-					<% } else { %>
-						<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-							<li><a class="nav-link" href="/signin"><img src="images/user.svg"></a></li>
-						</ul>
-						<% } %>
-
-
-							<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-								<li><a class="nav-link" href="/cart"><img src="images/cart.svg"></a></li>
-							</ul>
-							<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-								<li><a class="nav-link" href="/wishlist"><i class="fa-solid fa-heart" style="font-size: 150%; margin-top: 45%;"></i></a></li>
-							</ul>
-			</div>
-		</div>
-
-	</nav>
-
-	<script>
-        // Get the current path
-        const currentPath = window.location.pathname;
-        
-        // Remove all active classes first
-        document.querySelectorAll('.custom-navbar-nav .nav-item').forEach(item => {
-            item.classList.remove('active');
+        document.querySelectorAll('.logout-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                Swal.fire({
+                    title: 'Sign Out?',
+                    text: 'Are you sure you want to log out?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, log out',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = href;
+                    }
+                });
+            });
         });
-
-        let activeLink;
-        if (currentPath === '/') {
-            activeLink = document.querySelector('.custom-navbar-nav .nav-item:first-child');
-        } else {
-            activeLink = document.querySelector(`.custom-navbar-nav .nav-item a[href="${currentPath}"]`)?.parentElement;
-        }
-        
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
     </script>

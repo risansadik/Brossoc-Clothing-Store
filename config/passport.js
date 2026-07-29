@@ -4,9 +4,12 @@ const User = require('../models/userSchema');
 const env = require('dotenv');
 const session = require('express-session');
 
+const clientID = (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID.trim()) ? process.env.GOOGLE_CLIENT_ID : 'placeholder_google_client_id';
+const clientSecret = (process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CLIENT_SECRET.trim()) ? process.env.GOOGLE_CLIENT_SECRET : 'placeholder_google_client_secret';
+
 passport.use(new googleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientID,
+    clientSecret,
     callbackURL: '/auth/google/callback',
     passReqToCallback: true 
 }, async (req, accessToken, refreshToken, profile, done) => {

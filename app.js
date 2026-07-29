@@ -18,20 +18,10 @@ app.use(nocache());
 
 app.use(express.json());
 
-app.use((req, res, next) => {
 
-    if (req.xhr || req.headers.accept?.includes('application/json')) {
-        res.renderJSON = res.json;  
-        res.json = function(data) {
-            res.set('Content-Type', 'application/json');
-            return res.renderJSON(data);
-        };
-    }
-    next();
-});
 app.use(express.urlencoded({extended:true}));
 app.use(session({
-    secret:process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'brossoc_default_secret_key_2026',
     resave:false,
     saveUninitialized:true,
     cookie:{

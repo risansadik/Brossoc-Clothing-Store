@@ -1,12 +1,14 @@
 const Razorpay = require('razorpay');
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_SECRET
-});
+const getRazorpayInstance = () => {
+    const key_id = process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+    const key_secret = process.env.RAZORPAY_SECRET || 'placeholder_secret';
+    return new Razorpay({ key_id, key_secret });
+};
 
 const createOrder = async (amount, receipt) => {
     try {
+        const razorpay = getRazorpayInstance();
         const options = {
             amount: Math.round(amount*100), 
             currency: 'INR',

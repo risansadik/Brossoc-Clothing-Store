@@ -53,7 +53,6 @@ const cartSchema = new Schema({
     }
 });
 
-
 cartSchema.pre('save', function (next) {
     this.items.forEach(item => {
         item.totalPrice = item.price * item.quantity;

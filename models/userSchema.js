@@ -13,18 +13,10 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
-    phone: {
-
-        type: String,
-        required: false,
-        unique: false,
-        sparse: true,
-        default: null
-    },
     googleId: {
         type: String,
         unique: true,
-       
+        sparse: true
     },
     password: {
         type: String,
@@ -95,8 +87,6 @@ function generateUniqueReferralCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-
 module.exports = mongoose.model("User", userSchema);
-
 
 module.exports.generateUniqueReferralCode = generateUniqueReferralCode;

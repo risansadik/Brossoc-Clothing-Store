@@ -14,7 +14,6 @@ const sizeVariantSchema = new Schema({
     }
 });
 
-
 const productSchema = new Schema({
     productName: {
         type: String,

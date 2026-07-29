@@ -4,17 +4,11 @@ const User = require('../../models/userSchema');
 const getAddAddressPage = async (req, res) => {
 
     try {
-
-        res.render('add-address');
-
+        res.render('add-address', { returnTo: req.query.returnTo });
     } catch (error) {
-
-        console.log('error during loading address page', error);
 
     }
 }
-
-
 
 const addAddress = async (req, res) => {
     try {
@@ -44,10 +38,14 @@ const addAddress = async (req, res) => {
             });
             await userAddress.save();
         }
+        
+        let returnTo = req.query.returnTo;
+        if (returnTo === 'checkout') {
+            return res.redirect('/checkout');
+        }
         return res.redirect('/addresses');
         
     } catch (error) {
-        console.log('Error adding address:', error);
         return res.status(500).render('add-address', { error: 'Failed to add address' });
     }
 };
@@ -56,14 +54,12 @@ const loadAddresses = async (req, res) => {
     try {
         const userId = req.session.user;
         const addressData = await Address.findOne({ userId: userId });
-        
 
         res.render('addresses', {
             addresses: addressData ? addressData.address : [],
             user: req.session.user
         });
     } catch (error) {
-        console.log('Error loading addresses:', error);
         res.status(500).render('addresses', { 
             error: 'Failed to load addresses',
             addresses: []
@@ -76,7 +72,6 @@ const deleteAddress = async (req, res) => {
         const userId = req.session.user;
         const addressIndex = parseInt(req.params.index);
 
-       
         if (!userId) {
             return res.status(401).json({
                 success: false,
@@ -107,7 +102,6 @@ const deleteAddress = async (req, res) => {
             });
         }
 
-       
         userAddress.address.splice(addressIndex, 1);
         await userAddress.save();
 
@@ -131,14 +125,12 @@ const editAddress = async (req, res) => {
         const userId = req.session.user;
         const addressIndex = parseInt(req.params.index);
 
-       
         if (!userId) {
             return res.status(401).render('edit-address', { 
                 error: 'User not authenticated' 
             });
         }
 
-       
         const userAddress = await Address.findOne({ userId: userId });
 
         if (!userAddress) {
@@ -153,7 +145,6 @@ const editAddress = async (req, res) => {
             });
         }
 
-        
         res.render('edit-address', {
             addressType: userAddress.address[addressIndex].addressType,
             name: userAddress.address[addressIndex].name,
@@ -164,6 +155,7 @@ const editAddress = async (req, res) => {
             phoneNumber: userAddress.address[addressIndex].phone,
             alternativePhone: userAddress.address[addressIndex].altPhone,
             addressIndex: addressIndex,
+            returnTo: req.query.returnTo
         });
 
     } catch (error) {
@@ -179,7 +171,6 @@ const updateAddress = async (req, res) => {
         const userId = req.session.user;
         const addressIndex = parseInt(req.body.addressIndex);
 
-        
         if (!userId) {
             return res.status(401).json({
                 success: false,
@@ -187,7 +178,6 @@ const updateAddress = async (req, res) => {
             });
         }
 
-        
         const userAddress = await Address.findOne({ userId: userId });
 
         if (!userAddress) {
@@ -215,7 +205,6 @@ const updateAddress = async (req, res) => {
             altPhone: req.body.alternativePhone
         };
 
-       
         ('Address after update:', userAddress.address[addressIndex]);
 
         await userAddress.save();
@@ -236,7 +225,6 @@ const updateAddress = async (req, res) => {
 };
 module.exports = {
 
-   
     getAddAddressPage,
     addAddress,
     loadAddresses,

@@ -15,7 +15,6 @@ const reviewController = require('../controllers/user/reviewController');
 const passport = require('passport');
 const { blockAuth,userAuth , adminAuth , redirectIfAuthenticated} = require('../middlewares/auth');
 
-
 router.get('/', blockAuth, userController.loadHomePage);
 router.get('/pageNotFound', userController.pageNotFound);
 router.get('/about',userController.about);
@@ -30,7 +29,6 @@ router.get('/logout', userController.logout)
 router.get('/shop', blockAuth,userController.getShopPage);
 router.get('/productDetails',blockAuth, userController.getProductDetails);
 
-
 router.get('/auth/google', 
     passport.authenticate('google', { 
         scope: ['profile', 'email'],
@@ -44,7 +42,6 @@ router.get('/auth/google/callback',
         failureMessage: true
     }),
     (req, res) => {
-       
         req.session.user = req.user._id;
         res.redirect('/');
     }
@@ -74,7 +71,6 @@ router.put('/edit-userProfile/:id',userAuth, profileController.editUser);
 
 //address management
 
-
 router.get('/addAddress',userAuth, addressController.getAddAddressPage);
 router.post('/address/add',userAuth, addressController.addAddress);
 router.get('/addresses',userAuth, addressController.loadAddresses);
@@ -96,8 +92,6 @@ router.post('/process-checkout', userAuth, checkoutController.processCheckout);
 router.post('/create-razorpay-order', userAuth, checkoutController.createRazorpayOrder);
 router.post('/verify-payment', userAuth, checkoutController.verifyPayment);
 
-
-
 router.get('/orders', userAuth, orderController.getUserOrders);
 router.post('/orders/create', userAuth, orderController.createOrder);
 router.post('/orders/:orderId/cancel', userAuth, orderController.cancelOrder);
@@ -109,8 +103,6 @@ router.post('/submit-return',userAuth,orderController.submitReturnRequest);
 router.get('/return-requests',userAuth,orderController.getReturnRequests);
 router.post('/process-return',userAuth,orderController.processReturnRequest);
 
-
-
 router.post('/apply-coupon', userAuth, couponController.applyCoupon);
 router.post('/remove-coupon', userAuth, couponController.removeCoupon);
 router.get('/available-coupons', userAuth, couponController.getAvailableCoupons);
@@ -118,7 +110,6 @@ router.get('/available-coupons', userAuth, couponController.getAvailableCoupons)
 router.get('/wishlist', userAuth, wishlistController.getWishlist);
 router.post('/wishlist/add', userAuth, wishlistController.addToWishlist);
 router.delete('/wishlist/remove/:productId', userAuth, wishlistController.removeFromWishlist);
-
 
 router.get('/wallet', userAuth, walletController.getWallet);
 router.post('/wallet/refund/return', userAuth, walletController.processReturnRefund);
@@ -129,9 +120,5 @@ router.get('/referral',userAuth,referralController.getReferral)
 router.get('/:productId/reviews', reviewController.getProductReviews);
 router.post('/:productId/reviews', userAuth, reviewController.addReview);
 router.delete('/reviews/:reviewId', userAuth, reviewController.deleteReview);
-
-
-
-
 
 module.exports = router;

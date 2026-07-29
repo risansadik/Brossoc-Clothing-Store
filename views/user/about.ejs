@@ -1,127 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>About Us - Brossoc</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="css/tiny-slider.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+<%- include('../partials/user/header') %>
 
-    <%-include('../../views/partials/user/header.ejs')%>
-</head>
-<body>
+<style>
+    .about-hero { background: var(--green); color: #fff; padding: 80px 24px; text-align: center; }
+    .about-hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
+    .about-hero p { font-size: 1.1rem; max-width: 600px; margin: 0 auto; opacity: 0.9; line-height: 1.6; }
+    
+    .about-section { max-width: 1000px; margin: 0 auto; padding: 64px 24px; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-bottom: 64px; }
+    .about-grid:nth-child(even) { direction: rtl; }
+    .about-grid:nth-child(even) > * { direction: ltr; }
+    
+    .about-img { aspect-ratio: 4/3; background: var(--bg); border-radius: 12px; overflow: hidden; }
+    .about-img img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .about-text h2 { font-size: 1.8rem; font-weight: 700; color: var(--text); margin-bottom: 16px; letter-spacing: -0.3px; }
+    .about-text p { font-size: 1rem; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
 
-<!-- Hero Section -->
-<div class="hero">
-    <div class="container">
-        <div class="row justify-content-between">
-            <div class="col-lg-5">
-                <div class="intro-excerpt">
-                    <h1>Our Story</h1>
-                    <p class="mb-4">Crafting timeless elegance through carefully curated vintage-inspired fashion. Discover the heritage and passion behind Brossoc's commitment to classic sophistication.</p>
-                    <p><a href="/shop" class="btn btn-dark me-2">Shop Collection</a><a href="#why-choose" class="btn btn-outline-dark">Learn More</a></p>
-                </div>
-            </div>
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: center; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 40px; margin-bottom: 64px; }
+    .stat-item h3 { font-size: 2.5rem; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .stat-item p { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+
+    @media (max-width: 768px) {
+        .about-grid { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+        .about-grid:nth-child(even) { direction: ltr; }
+        .stats-row { grid-template-columns: 1fr; gap: 32px; padding: 32px 20px; }
+    }
+</style>
+
+<div class="about-hero">
+    <h1>Our Story</h1>
+    <p>Redefining classic fashion with a modern twist. At Brossoc, we believe true style is timeless and quality is never compromised.</p>
+</div>
+
+<div class="about-section">
+    <div class="about-grid">
+        <div class="about-text">
+            <h2>The Vision</h2>
+            <p>Brossoc was founded on a simple premise: to bring the elegance of old-money fashion to the modern wardrobe. We curate pieces that stand the test of time, both in style and durability.</p>
+            <p>Our commitment is to provide you with a premium shopping experience, offering a collection that embodies sophistication and understated luxury.</p>
+        </div>
+        <div class="about-img">
+            <img src="/images/about_vision.png" alt="Our Vision">
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-item"><h3>10k+</h3><p>Happy Customers</p></div>
+        <div class="stat-item"><h3>100%</h3><p>Premium Quality</p></div>
+        <div class="stat-item"><h3>24/7</h3><p>Support Access</p></div>
+    </div>
+
+    <div class="about-grid">
+        <div class="about-img">
+            <img src="/images/about_craftsmanship.png" alt="Quality Craftsmanship">
+        </div>
+        <div class="about-text">
+            <h2>Uncompromising Quality</h2>
+            <p>Every piece in our collection is carefully selected to ensure it meets our strict standards for quality, comfort, and design. We believe that true luxury lies in the details.</p>
+            <p>Join us in celebrating fashion that doesn't just look good, but feels exceptional and lasts a lifetime.</p>
         </div>
     </div>
 </div>
 
-<!-- Why Choose Us Section -->
-<div class="why-choose-section" id="why-choose">
-    <div class="container">
-        <div class="row justify-content-between align-items-center">
-            <div class="col-lg-6">
-                <h2 class="section-title">The Brossoc Difference</h2>
-                <p>At Brossoc, we believe in the timeless appeal of vintage-inspired fashion. Each piece in our collection is carefully selected to embody the sophistication and refinement of classic style.</p>
-
-                <div class="row my-5">
-                    <div class="col-6 col-md-6">
-                        <div class="feature">
-                            <div class="icon">
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <h3>Premium Quality</h3>
-                            <p>Each piece is crafted with attention to detail and premium materials, ensuring lasting elegance.</p>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-6">
-                        <div class="feature">
-                            <div class="icon">
-                                <i class="fa-solid fa-pen-nib"></i>
-                            </div>
-                            <h3>Timeless Design</h3>
-                            <p>Our designs blend classic elements with contemporary sensibilities for enduring style.</p>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-6">
-                        <div class="feature">
-                            <div class="icon">
-                                <i class="fa-solid fa-person-running"></i>
-                            </div>
-                            <h3>Sustainable Fashion</h3>
-                            <p>We prioritize sustainable practices and timeless pieces that transcend fast fashion trends.</p>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-6">
-                        <div class="feature">
-                            <div class="icon">
-                                <i class="fa-solid fa-user-plus"></i>
-                            </div>
-                            <h3>Personal Service</h3>
-                            <p>Our dedicated team ensures a personalized shopping experience for every customer.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-5">
-                <div class="img-wrap">
-                    <img src="/images/vintage.jpg" alt="Vintage Fashion Display" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Our Values Section -->
-<div class="product-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center mb-5">
-                <h2 class="section-title">Our Values</h2>
-                <p>Building a legacy of style, sustainability, and sophistication</p>
-            </div>
-
-            <div class="col-lg-4 mb-5">
-                <div class="text-center">
-                    <i class="fa-solid fa-gopuram"></i>
-                    <h3>Heritage</h3>
-                    <p>Drawing inspiration from classic fashion traditions while creating contemporary interpretations.</p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 mb-5">
-                <div class="text-center">
-                    <i class="fa-solid fa-star"></i>
-                    <h3>Quality</h3>
-                    <p>Committed to exceptional craftsmanship and attention to detail in every piece.</p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 mb-5">
-                <div class="text-center">
-                    <i class="fa-solid fa-user-group"></i>
-                    <h3>Community</h3>
-                    <p>Building a community of individuals who appreciate timeless style and sustainable fashion.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<%-include('../../views/partials/user/footer.ejs')%>
+<%- include('../partials/user/footer') %>

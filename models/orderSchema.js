@@ -137,7 +137,6 @@ orderSchema.pre('findOne', function(next) {
 });
 
 orderSchema.methods.recalculateTotals = function() {
-    
 
     const normalizedItems = this.orderedItems.map((item, index) => {
         // Ensure numeric values
@@ -163,18 +162,15 @@ orderSchema.methods.recalculateTotals = function() {
         activeItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)
     );
 
- 
     const discount = Number(this.discount || 0);
     this.finalAmount = Number((this.totalPrice - discount).toFixed(2));
 
-   
     if (activeItems.length === 0) {
         this.status = 'Cancelled';
         this.totalPrice = 0;
         this.finalAmount = 0;
         this.discount = 0;
-        
-     
+
         this.couponApplied = {
             couponCode: null,
             couponId: null,
@@ -184,7 +180,6 @@ orderSchema.methods.recalculateTotals = function() {
 
     return this;
 };
-
 
 orderSchema.pre('save', function(next) {
     try {
@@ -200,8 +195,7 @@ orderSchema.methods.generateInvoiceNumber = async function() {
         const date = new Date();
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
-        
-      
+
         const latestInvoice = await this.constructor.findOne({
             invoiceNumber: { $regex: `INV-${year}${month}-` }
         })
