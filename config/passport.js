@@ -10,7 +10,7 @@ const clientSecret = (process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CLI
 passport.use(new googleStrategy({
     clientID,
     clientSecret,
-    callbackURL: '/auth/google/callback',
+    callbackURL: process.env.NODE_ENV === 'production' ? 'https://brossoc.binsadik.online/auth/google/callback' : '/auth/google/callback',
     passReqToCallback: true 
 }, async (req, accessToken, refreshToken, profile, done) => {
     try {
