@@ -170,8 +170,8 @@
             };
         %>
         <div class="ess-grid">
-            <a href="/shop<%= getCatId('suit') %>" class="ess-card">
-                <% const suitProd = products.find(p => p.category && p.category.name.toLowerCase().includes('suit')); %>
+            <a href="/shop<%= getCatId('tailoring') %>" class="ess-card">
+                <% const suitProd = products.find(p => p.category && p.category.name.toLowerCase().includes('tailoring')); %>
                 <% if (suitProd && suitProd.productImage && suitProd.productImage.length > 0) { %>
                     <img src="<%= (suitProd.productImage[0].startsWith('http')) ? suitProd.productImage[0] : '/uploads/product-images/' + suitProd.productImage[0] %>" alt="Tailoring" class="ess-img">
                 <% } else { %>
