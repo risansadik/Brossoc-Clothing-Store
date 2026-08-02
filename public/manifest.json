@@ -1,0 +1,18 @@
+{
+  "name": "Brossoc Premium Store",
+  "short_name": "Brossoc",
+  "description": "Premium Men's Tailoring & Sartorial Elegance",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f5f3",
+  "theme_color": "#4a5225",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
