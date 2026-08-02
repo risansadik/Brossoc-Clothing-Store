@@ -89,13 +89,13 @@
             const passwordInput = document.getElementById('pass');
             const confirmPasswordInput = document.getElementById('cPass');
 
-            if (!nameInput || !nameInput.value.trim()) {
-                await Swal.fire({ icon: 'error', title: 'Invalid Input', text: 'Username cannot be blank', confirmButtonColor: '#4a5225' });
+            if (!nameInput || nameInput.value.trim().length < 3 || !/^[A-Za-z\s]+$/.test(nameInput.value.trim())) {
+                await Swal.fire({ icon: 'error', title: 'Invalid Input', text: 'Name must be at least 3 letters and contain only letters', confirmButtonColor: '#4a5225' });
                 if (nameInput) nameInput.focus(); return;
             }
             if (passwordInput && confirmPasswordInput && (passwordInput.value || confirmPasswordInput.value)) {
                 if (passwordInput.value !== confirmPasswordInput.value) { await Swal.fire({ icon: 'error', title: 'Password Mismatch', text: 'Passwords do not match!', confirmButtonColor: '#4a5225' }); passwordInput.focus(); return; }
-                if (passwordInput.value.length < 6) { await Swal.fire({ icon: 'error', title: 'Invalid Password', text: 'Password must be at least 6 characters', confirmButtonColor: '#4a5225' }); passwordInput.focus(); return; }
+                if (passwordInput.value.length < 8 || !/[a-zA-Z]/.test(passwordInput.value) || !/\d/.test(passwordInput.value)) { await Swal.fire({ icon: 'error', title: 'Invalid Password', text: 'Password must be at least 8 chars with letters & numbers', confirmButtonColor: '#4a5225' }); passwordInput.focus(); return; }
             }
 
             const formData = { name: nameInput.value.trim(), password: passwordInput && passwordInput.value ? passwordInput.value.trim() : '', cPassword: confirmPasswordInput && confirmPasswordInput.value ? confirmPasswordInput.value.trim() : '' };

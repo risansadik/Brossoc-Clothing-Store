@@ -139,9 +139,19 @@
 
     const form = e.target;
     const formData = new FormData(form);
+    
+    const categoryName = formData.get('categoryName').trim();
+    const description = formData.get('description').trim();
+
+    if (!categoryName) { Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter a category name.', confirmButtonColor: '#111111' }); return; }
+    if (!/^[a-zA-Z\s]+$/.test(categoryName)) { Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Name should contain only letters.', confirmButtonColor: '#111111' }); return; }
+    if (categoryName.length > 50) { Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Name should be less than 50 characters.', confirmButtonColor: '#111111' }); return; }
+    if (!description) { Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter a description.', confirmButtonColor: '#111111' }); return; }
+    if (description.length > 200) { Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Description should be less than 200 characters.', confirmButtonColor: '#111111' }); return; }
+
     const data = {
-      categoryName: formData.get('categoryName'),
-      description: formData.get('description')
+      categoryName,
+      description
     };
 
     try {

@@ -449,7 +449,10 @@
     let ok = true;
 
     if (!name) { showErr('productName-error', 'Product name is required.'); ok = false; }
+    else if (name.length > 80) { showErr('productName-error', 'Product name must be less than 80 characters.'); ok = false; }
+    
     if (!desc) { showErr('descriptionData-error', 'Description is required.'); ok = false; }
+    else if (desc.length > 600) { showErr('descriptionData-error', 'Description must be less than 600 characters.'); ok = false; }
     if (!reg || reg <= 0) { showErr('regularPrice-error', 'Enter a valid regular price.'); ok = false; }
     if (!sale || sale <= 0) { showErr('salePrice-error', 'Enter a valid sale price.'); ok = false; }
     if (reg && sale && sale >= reg) { showErr('salePrice-error', 'Sale price must be less than regular price.'); ok = false; }

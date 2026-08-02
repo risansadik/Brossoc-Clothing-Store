@@ -123,7 +123,7 @@
     <div style="max-width: 800px;">
       <div class="form-section">
         <div class="form-section-title">COUPON DETAILS</div>
-        <form action="/admin/createCoupon" method="POST">
+        <form action="/admin/createCoupon" method="POST" id="couponForm">
           <div class="form-group">
             <label class="form-label">Coupon Code <span style="color:red">*</span></label>
             <input type="text" name="code" class="form-control" placeholder="e.g. SUMMER20" required style="text-transform:uppercase;">
@@ -229,6 +229,39 @@
       percentageField.querySelector('input').value = '';
     }
   }
+
+  document.getElementById('couponForm').addEventListener('submit', function(e) {
+    const code = document.querySelector('input[name="code"]').value.trim();
+    const desc = document.querySelector('textarea[name="description"]').value.trim();
+    const minPurchase = parseFloat(document.querySelector('input[name="minimumPurchase"]').value);
+    const maxPurchase = parseFloat(document.querySelector('input[name="maximumPurchase"]').value);
+    const expireOn = document.querySelector('input[name="expireOn"]').value;
+    
+    if (!code) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Coupon code is required.', confirmButtonColor: '#111111'}); return; }
+    if (code.length > 20) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Coupon code must be less than 20 characters.', confirmButtonColor: '#111111'}); return; }
+    if (!desc) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Description is required.', confirmButtonColor: '#111111'}); return; }
+    if (desc.length > 200) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Description must be less than 200 characters.', confirmButtonColor: '#111111'}); return; }
+    
+    const discountType = document.getElementById('discountTypeInput').value;
+    if (discountType === 'percentage') {
+      const pct = parseFloat(document.querySelector('input[name="discountPercentage"]').value);
+      if (!pct || pct < 1 || pct > 100) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Please enter a valid discount percentage (1-100).', confirmButtonColor: '#111111'}); return; }
+    } else {
+      const fixed = parseFloat(document.querySelector('input[name="offerPrice"]').value);
+      if (!fixed || fixed <= 0) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Please enter a valid fixed discount amount.', confirmButtonColor: '#111111'}); return; }
+    }
+    
+    if (isNaN(minPurchase) || minPurchase < 0) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Please enter a valid minimum purchase amount.', confirmButtonColor: '#111111'}); return; }
+    if (isNaN(maxPurchase) || maxPurchase < 0) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Please enter a valid maximum purchase amount.', confirmButtonColor: '#111111'}); return; }
+    
+    if (minPurchase > maxPurchase) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Minimum purchase cannot be greater than maximum purchase.', confirmButtonColor: '#111111'}); return; }
+    
+    if (!expireOn) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Expiration date is required.', confirmButtonColor: '#111111'}); return; }
+    const expireDate = new Date(expireOn);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (expireDate < today) { e.preventDefault(); Swal.fire({icon: 'warning', title: 'Validation Error', text: 'Expiration date cannot be in the past.', confirmButtonColor: '#111111'}); return; }
+  });
 </script>
 </body>
 </html>

@@ -155,7 +155,7 @@
             <div class="alert"><i class="fa-solid fa-circle-exclamation"></i> <%= message %></div>
             <% } %>
 
-            <form action="/admin/login" method="POST">
+            <form action="/admin/login" method="POST" id="adminLoginForm">
                 <div class="form-field">
                     <label>Email Address</label>
                     <input type="email" name="email" required autocomplete="email" placeholder="Enter your email">
@@ -170,5 +170,30 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', function (e) {
+            const email = document.querySelector('input[name="email"]').value.trim();
+            const password = document.querySelector('input[name="password"]').value.trim();
+            
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            
+            if (!email) {
+                e.preventDefault();
+                Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Email cannot be empty.', confirmButtonColor: '#111111' });
+                return;
+            }
+            if (!emailPattern.test(email)) {
+                e.preventDefault();
+                Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter a valid email format.', confirmButtonColor: '#111111' });
+                return;
+            }
+            if (!password) {
+                e.preventDefault();
+                Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Password cannot be empty.', confirmButtonColor: '#111111' });
+                return;
+            }
+        });
+    </script>
 </body>
 </html>

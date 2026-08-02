@@ -482,8 +482,10 @@
             rvForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const rating = document.querySelector('input[name="rating"]:checked')?.value;
-                const review = document.getElementById('rvText').value;
+                const review = document.getElementById('rvText').value.trim();
                 if (!rating) { Swal.fire({title:'Rating required', icon:'warning', toast:true, position:'top-end', timer:2000, showConfirmButton:false}); return; }
+                if (!review) { Swal.fire({title:'Review required', text: 'Please write a review.', icon:'warning', toast:true, position:'top-end', timer:2000, showConfirmButton:false}); return; }
+                if (review.length > 500) { Swal.fire({title:'Too long', text: 'Review must be less than 500 characters.', icon:'warning', toast:true, position:'top-end', timer:2000, showConfirmButton:false}); return; }
                 try {
                     Swal.fire({title:'Submitting...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
                     const res = await fetch(`/${pid}/reviews`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({rating, review}) });

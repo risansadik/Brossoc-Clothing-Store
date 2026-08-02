@@ -530,6 +530,10 @@ const getOrderDetails = async (req, res) => {
                 'address._id': order.address
             });
         }
+        
+        if (!addressDocument) {
+            addressDocument = await Address.findOne({ userId: order.userId });
+        }
 
         let addressInfo;
         if (addressDocument) {
@@ -788,6 +792,10 @@ const generateInvoicePDF = async (req, res) => {
                 userId: order.userId,
                 'address._id': order.address
             });
+        }
+
+        if (!addressDocument) {
+            addressDocument = await Address.findOne({ userId: order.userId });
         }
 
         let addressInfo;

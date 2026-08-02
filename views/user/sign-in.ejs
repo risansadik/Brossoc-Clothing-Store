@@ -252,6 +252,24 @@
 
             document.getElementById('loginForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
+                
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                if (!email) {
+                    Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Email address cannot be empty.', confirmButtonColor: '#4a5225' });
+                    return;
+                }
+                if (!emailPattern.test(email)) {
+                    Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter a valid email format.', confirmButtonColor: '#4a5225' });
+                    return;
+                }
+                if (!password) {
+                    Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Password cannot be empty.', confirmButtonColor: '#4a5225' });
+                    return;
+                }
+                
                 try {
                     const formData = new FormData(this);
                     const response = await fetch('/signin', {

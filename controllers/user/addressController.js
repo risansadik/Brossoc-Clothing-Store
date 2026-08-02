@@ -194,18 +194,17 @@ const updateAddress = async (req, res) => {
             });
         }
        
-        userAddress.address[addressIndex] = {
-            addressType: req.body.addressType,
-            name: req.body.name,
-            landmark: req.body.streetAddress,
-            city: req.body.city,
-            state: req.body.state,
-            pincode: req.body.pinCode,
-            phone: req.body.phoneNumber,
-            altPhone: req.body.alternativePhone
-        };
+        const targetAddress = userAddress.address[addressIndex];
+        targetAddress.addressType = req.body.addressType;
+        targetAddress.name = req.body.name;
+        targetAddress.landmark = req.body.streetAddress;
+        targetAddress.city = req.body.city;
+        targetAddress.state = req.body.state;
+        targetAddress.pincode = req.body.pinCode;
+        targetAddress.phone = req.body.phoneNumber;
+        targetAddress.altPhone = req.body.alternativePhone;
 
-        ('Address after update:', userAddress.address[addressIndex]);
+        // 'Address after update:', userAddress.address[addressIndex]
 
         await userAddress.save();
 

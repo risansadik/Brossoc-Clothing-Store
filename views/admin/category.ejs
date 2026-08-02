@@ -239,7 +239,10 @@
     let ok = true;
     if (!name) { showErr('name-error', 'Please enter a category name.'); ok = false; }
     else if (!/^[a-zA-Z\s]+$/.test(name)) { showErr('name-error', 'Name should contain only letters.'); ok = false; }
+    else if (name.length > 50) { showErr('name-error', 'Name should be less than 50 characters.'); ok = false; }
+    
     if (!description) { showErr('description-error', 'Please enter a description.'); ok = false; }
+    else if (description.length > 200) { showErr('description-error', 'Description should be less than 200 characters.'); ok = false; }
     if (!ok) return;
 
     fetch('/admin/addCategory', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, description }) })

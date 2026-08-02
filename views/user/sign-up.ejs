@@ -236,8 +236,10 @@
         });
 
         function nameValidateChecking() {
-            const val = nameId.value.trim();
-            if (!val) { error1.style.display='block'; error1.innerHTML='Please enter your name'; return false; }
+            let val = nameId.value.trim();
+            val = val.replace(/\s+/g, ' ');
+            nameId.value = val;
+            if (!val || val.length < 3) { error1.style.display='block'; error1.innerHTML='Please enter a valid name (min 3 chars)'; return false; }
             if (!/^[A-Za-z\s]+$/.test(val)) { error1.style.display='block'; error1.innerHTML='Name can only contain letters'; return false; }
             error1.style.display='none'; error1.innerHTML=''; return true;
         }

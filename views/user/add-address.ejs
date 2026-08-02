@@ -82,10 +82,37 @@
         inputs.forEach(input => {
             input.classList.remove('error');
             input.nextElementSibling.style.display = 'none';
-            if (input.value.trim() === '' && input.name !== 'altPhone') { input.classList.add('error'); input.nextElementSibling.style.display = 'block'; isValid = false; }
-            if (input.name === 'pincode' && !/^\d{6}$/.test(input.value)) { input.classList.add('error'); input.nextElementSibling.style.display = 'block'; isValid = false; }
-            if (input.name === 'phone' && !/^\d{10}$/.test(input.value)) { input.classList.add('error'); input.nextElementSibling.style.display = 'block'; isValid = false; }
-            if (input.name === 'altPhone' && input.value && !/^\d{10}$/.test(input.value)) { input.classList.add('error'); input.nextElementSibling.style.display = 'block'; isValid = false; }
+            if (input.value.trim() === '' && input.name !== 'altPhone') { 
+                input.classList.add('error'); 
+                input.nextElementSibling.innerHTML = 'This field cannot be empty';
+                input.nextElementSibling.style.display = 'block'; 
+                isValid = false; 
+            } else if (input.value.trim() !== '') {
+                if (['name', 'addressType', 'city', 'state'].includes(input.name) && !/^[A-Za-z\s]+$/.test(input.value.trim())) {
+                    input.classList.add('error');
+                    input.nextElementSibling.innerHTML = 'Only letters and spaces allowed';
+                    input.nextElementSibling.style.display = 'block';
+                    isValid = false;
+                }
+                if (input.name === 'pincode' && !/^\d{6}$/.test(input.value)) { 
+                    input.classList.add('error'); 
+                    input.nextElementSibling.innerHTML = 'Enter a valid 6-digit PIN code';
+                    input.nextElementSibling.style.display = 'block'; 
+                    isValid = false; 
+                }
+                if (input.name === 'phone' && !/^\d{10}$/.test(input.value)) { 
+                    input.classList.add('error'); 
+                    input.nextElementSibling.innerHTML = 'Enter a valid 10-digit phone number';
+                    input.nextElementSibling.style.display = 'block'; 
+                    isValid = false; 
+                }
+                if (input.name === 'altPhone' && !/^\d{10}$/.test(input.value)) { 
+                    input.classList.add('error'); 
+                    input.nextElementSibling.innerHTML = 'Enter a valid 10-digit phone number';
+                    input.nextElementSibling.style.display = 'block'; 
+                    isValid = false; 
+                }
+            }
         });
         if (isValid) form.submit();
         return isValid;

@@ -114,10 +114,10 @@
             <p class="auth-sub">Enter the 4-digit code sent to your email address.</p>
 
             <div class="otp-inputs" id="otp">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 0)" inputmode="numeric">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 1)" inputmode="numeric">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 2)" inputmode="numeric">
-                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 3)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 0)" onpaste="handlePaste(event)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 1)" onpaste="handlePaste(event)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 2)" onpaste="handlePaste(event)" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 3)" onpaste="handlePaste(event)" inputmode="numeric">
             </div>
 
             <p class="timer-text">Resend in <span id="timer">57</span>s</p>
@@ -148,6 +148,16 @@
             if (input.value.length === 0 && index > 0 && event.key === 'Backspace') document.querySelectorAll('.otp-input')[index - 1].focus();
         }
 
+        function handlePaste(e) {
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            if (paste.length === 4 && /^\d+$/.test(paste)) {
+                const inputs = document.querySelectorAll('.otp-input');
+                inputs.forEach((input, i) => { input.value = paste[i]; });
+                inputs[3].focus();
+                e.preventDefault();
+            }
+        }
+
         function resendOTP() {
             fetch('/resend-otp', { method: 'POST' })
                 .then(r => r.json())
@@ -167,6 +177,10 @@
         function validateOTPForm() {
             let otp = '';
             document.querySelectorAll('.otp-input').forEach(i => otp += i.value);
+            if (otp.length !== 4) {
+                Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter a 4-digit code.', confirmButtonColor: '#4a5225' });
+                return false;
+            }
             fetch('/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
