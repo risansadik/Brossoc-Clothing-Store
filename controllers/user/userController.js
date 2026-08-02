@@ -151,12 +151,41 @@ async function sendVerificationEmail(email, otp) {
             }
         })
 
+        const emailTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Inter', Arial, sans-serif; background-color: #f4f5f3; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; padding: 40px; border-radius: 8px; border: 1px solid #e2e5e0; text-align: center; }
+        .logo { font-size: 24px; font-weight: 700; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase; font-family: 'Playfair Display', serif; }
+        .title { font-size: 20px; color: #1a1a1a; margin-bottom: 15px; font-weight: 600; }
+        .message { color: #6b7280; font-size: 15px; line-height: 1.6; margin-bottom: 30px; }
+        .otp-box { background-color: #4a5225; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: 6px; padding: 15px 30px; border-radius: 4px; display: inline-block; margin-bottom: 30px; }
+        .footer { font-size: 12px; color: #9ca3af; border-top: 1px solid #e2e5e0; padding-top: 20px; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">BROSSOC</div>
+        <div class="title">Account Verification</div>
+        <div class="message">Please use the verification code below to complete your account registration. This code will expire securely in 2 minutes.</div>
+        <div class="otp-box">${otp}</div>
+        <div class="message" style="font-size: 13px;">If you did not request this code, please safely ignore this email.</div>
+        <div class="footer">
+            &copy; 2026 Brossoc. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
+`;
+
         const info = await transporter.sendMail({
-            from: process.env.NODEMAILER_EMAIL,
+            from: `"Brossoc" <${process.env.NODEMAILER_EMAIL}>`,
             to: email,
-            subject: "Verify your account",
-            text: `Your OTP is ${otp}`,
-            html: `<b>Your OTP : ${otp}</b>`,
+            subject: "Brossoc - Verify Your Account",
+            text: `Your Brossoc verification code is ${otp}. Please use this to verify your account.`,
+            html: emailTemplate,
         })
 
         return info.accepted.length > 0
